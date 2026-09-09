@@ -1,0 +1,21 @@
+[package]
+name = "solaxis-engine"
+version = "0.1.0"
+description = "Solaxis Serverless Web3 Micro-Instance Engine on Solana"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "solaxis_engine"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.32.1"
+ephemeral-rollups-sdk = { version = "0.16.2", features = ["anchor-compat"] }
