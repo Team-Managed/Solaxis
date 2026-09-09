@@ -12,33 +12,33 @@
 | **Styling** | Tailwind CSS + Custom Design Tokens | Dense dark UI, futuristic telemetry animations, solar gradients |
 | **CLI Runtime** | Node.js / Commander / Chalk / Ora | Standalone terminal utility (`solaxis`) |
 | **Solana RPC** | `@solana/web3.js` / Anza Devnet RPC | Base-layer transaction submission, account verification |
-| **Monorepo Layout** | pnpm workspaces | `packages/contracts`, `packages/sdk`, `packages/cli`, `packages/app`, `packages/shared` |
+| **Monorepo Layout** | pnpm workspaces | `contracts`, `sdk`, `cli`, `app`, `shared` (root peer directories) |
 
 ---
 
 ## Deployables & Boundaries
 
-Solaxis is organized as a unified monorepo with distinct packages:
+Solaxis is organized as a unified monorepo with distinct packages as root peer directories:
 
-1. **`packages/contracts`**:
+1. **`contracts`**:
    - The Solana Anchor program (`solaxis_engine`) and reusable on-chain Rust crate (`solaxis-engine-sdk`).
    - Owns the on-chain state machine, PDA derivations, delegation CPI, undelegation processors, and traits for custom developer compute.
    - Deploys directly to Solana Devnet via Anchor CLI.
-2. **`packages/sdk`**:
+2. **`sdk`**:
    - Public TypeScript Developer SDK (`@solaxis/sdk`).
    - Exposes `SolaxisClient`, `defineFunction`, lifecycle event hooks, and direct MagicBlock ER/TEE orchestration for external dApps and scripts.
-3. **`packages/cli`**:
+3. **`cli`**:
    - Standalone Node.js CLI executable (`solaxis`).
    - Project scaffolding (`solaxis new`), function deployment (`solaxis deploy`), keypair management, router discovery, and terminal execution.
-4. **`packages/app`**:
+4. **`app`**:
    - Next.js Web3 Developer Console.
    - Houses the visual interface, wallet adapter, live 4-stage lifecycle visualizer, streaming log terminal, and benchmark cards.
-5. **`packages/shared`**:
+5. **`shared`**:
    - Internal protocol contracts, canonical Zod schemas, network constants, PDA helpers, and environment validators.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                   Web3 Developer Console (packages/app)                │
+│                   Web3 Developer Console (app)                         │
 │   • Next.js App Router + Tailwind CSS                                  │
 │   • Wallet Adapter (Phantom, Solflare, Local Keypair)                  │
 │   • Live Lifecycle Pipeline Visualizer + CloudWatch Log Terminal       │
@@ -46,14 +46,13 @@ Solaxis is organized as a unified monorepo with distinct packages:
                                    │
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                 TypeScript Developer SDK (packages/sdk)                │
+│                 TypeScript Developer SDK (sdk)                         │
 │   • SolaxisClient + defineFunction + Lifecycle Event Stream            │
-│   • Consumed by packages/cli, packages/app, and external developers    │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
-│                      Solaxis CLI (packages/cli)                        │
+│                      Solaxis CLI (cli)                                 │
 │   • Scaffolding (`solaxis new`), deploy, run, and benchmark            │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
