@@ -14,6 +14,7 @@
     "sdk": "pnpm --filter @solaxis/sdk"
   },
   "devDependencies": {
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^5.0.0"
   }
 }
