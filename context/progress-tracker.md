@@ -6,11 +6,11 @@ Update this file whenever the current phase, active unit, or implementation stat
 
 ## Current Phase
 
-**Phase 5: Developer SDK & Custom Functions Complete — Ready for CLI Runner**
+**Phase 6: CLI Runner Complete — Ready for Web Console & Design System**
 
 ## Current Goal
 
-Unit 01, Unit 03, Unit 04, and Unit 05 implementations verified and complete. `@solaxis/sdk` (with `SolaxisClient`, `defineFunction`, `scaffoldFunctionProject`, `deployProgram`), `solaxis-engine-sdk` Rust crate, and test suites passing. Ready to proceed to Unit 06 (Solaxis CLI Runner).
+Unit 01, Unit 03, Unit 04, Unit 05, and Unit 06 implementations verified and complete. Developer CLI (`@solaxis/cli`) binary `solaxis` operational with commands (`new`, `init`, `status`, `invoke`, `deploy`), animated Ora spinners, cli-table3 telemetry summaries, and 9 Vitest tests passing. Ready to proceed to Unit 02 / Unit 07 (Design System and Web Console App Shell).
 
 ---
 
@@ -33,7 +33,7 @@ All specs have been authored to match the Flank benchmark format: zero raw code 
 
 | Unit | Spec | Status | Notes |
 |---|---|---|---|
-| **06** | Solaxis CLI Runner | ⏳ Pending | Commander.js CLI, `new`, `deploy`, `init`, `status`, `invoke`, animated spinners, ASCII tables, exit codes |
+| **06** | Solaxis CLI Runner | ✅ Complete | Commander.js CLI, `new`, `deploy`, `init`, `status`, `invoke`, animated Ora spinners, cli-table3 telemetry, 9 tests passing |
 
 ### Web Developer Console & Verification
 
