@@ -5,3 +5,6 @@ export * from "./contracts/function.js";
 export * from "./contracts/telemetry.js";
 export * from "./utils/pda.js";
 export * from "./env.js";
+export * from "./controller/types.js";
+export * from "./controller/instruction-builders.js";
+export * from "./controller/lifecycle-controller.js";

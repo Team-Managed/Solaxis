@@ -165,6 +165,9 @@ importers:
 
   shared:
     dependencies:
+      '@magicblock-labs/ephemeral-rollups-sdk':
+        specifier: ^0.17.0
+        version: 0.17.0(bufferutil@4.1.0)
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.4(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
@@ -172,9 +175,6 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@magicblock-labs/ephemeral-rollups-sdk':
-        specifier: ^0.17.0
-        version: 0.17.0(bufferutil@4.1.0)
       '@types/node':
         specifier: ^22.13.5
         version: 22.20.1
