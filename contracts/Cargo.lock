@@ -788,7 +788,7 @@ dependencies = [
  "magicblock-magic-program-api",
  "solana-account-info 2.3.0",
  "solana-address 2.7.0",
- "solana-program 2.3.0",
+ "solana-program 2.2.1",
  "solana-program 3.0.0",
  "solana-program-error 2.2.2",
  "solana-system-interface 2.0.0",
@@ -858,7 +858,7 @@ dependencies = [
  "borsh 0.10.4",
  "borsh 1.8.1",
  "ephemeral-vrf-sdk-vrf-macro",
- "solana-program 2.3.0",
+ "solana-program 2.2.1",
  "solana-program 3.0.0",
  "solana-pubkey 2.4.0",
  "solana-system-interface 3.3.0",
@@ -1256,7 +1256,7 @@ dependencies = [
  "bincode",
  "const-crypto",
  "serde",
- "solana-program 2.3.0",
+ "solana-program 2.2.1",
  "solana-program 3.0.0",
  "solana-signature 2.3.0",
  "solana-signature 3.5.2",
@@ -2542,21 +2542,6 @@ dependencies = [
 
 [[package]]
 name = "solana-loader-v3-interface"
-version = "5.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f7162a05b8b0773156b443bccd674ea78bb9aa406325b467ea78c06c99a63a2"
-dependencies = [
- "serde",
- "serde_bytes",
- "serde_derive",
- "solana-instruction 2.3.3",
- "solana-pubkey 2.4.0",
- "solana-sdk-ids 2.2.1",
- "solana-system-interface 1.0.0",
-]
-
-[[package]]
-name = "solana-loader-v3-interface"
 version = "6.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e0538d4dbc9022e01616f1c58f2db98ece739c5d5ed4a2ef8737a953e76a2d4"
@@ -2683,9 +2668,9 @@ dependencies = [
 
 [[package]]
 name = "solana-program"
-version = "2.3.0"
+version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98eca145bd3545e2fbb07166e895370576e47a00a7d824e325390d33bf467210"
+checksum = "586469467e93ceb79048f8d8e3a619bf61d05396ee7de95cb40280301a589d05"
 dependencies = [
  "bincode",
  "blake3",
@@ -2725,7 +2710,7 @@ dependencies = [
  "solana-keccak-hasher 2.2.1",
  "solana-last-restart-slot 2.2.1",
  "solana-loader-v2-interface",
- "solana-loader-v3-interface 5.0.0",
+ "solana-loader-v3-interface 3.0.0",
  "solana-loader-v4-interface",
  "solana-message 2.4.0",
  "solana-msg 2.2.1",
@@ -3433,6 +3418,14 @@ dependencies = [
 
 [[package]]
 name = "solaxis-engine"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "ephemeral-rollups-sdk",
+]
+
+[[package]]
+name = "solaxis-engine-sdk"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",

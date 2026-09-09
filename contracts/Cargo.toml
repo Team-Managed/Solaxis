@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "programs/solaxis_engine"
+    "programs/solaxis_engine",
+    "crates/solaxis-engine-sdk"
 ]
 resolver = "2"
 
