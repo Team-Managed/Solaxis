@@ -113,6 +113,13 @@ export function registerVmCommand(program: Command): void {
           [chalk.white("In-Memory State"), inMemoryState]
         );
 
+        if (taskPda) {
+          card.push([
+            chalk.white("VM Web Explorer"),
+            chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=custom&customUrl=${encodeURIComponent(vmUrl)}`)
+          ]);
+        }
+
         console.log(`\n${card.toString()}\n`);
         process.exit(0);
       } catch (err) {
