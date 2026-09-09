@@ -8,6 +8,7 @@ build
 .next
 out
 target
+*.tsbuildinfo
 
 # Environment & local files
 .env

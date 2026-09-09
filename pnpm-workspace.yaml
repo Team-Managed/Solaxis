@@ -9,3 +9,8 @@ allowBuilds:
   bufferutil: true
   esbuild: true
   utf-8-validate: true
+  '@stellar/stellar-sdk': true
+  blake-hash: true
+  protobufjs: true
+  tiny-secp256k1: true
+  usb: true

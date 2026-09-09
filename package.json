@@ -8,7 +8,8 @@
     "typecheck": "pnpm --filter \"@solaxis/*\" run typecheck",
     "test": "pnpm --filter \"@solaxis/*\" run test",
     "lint": "pnpm --filter \"@solaxis/*\" run lint",
-    "cli": "pnpm --filter @solaxis/cli",
+    "cli": "node ./cli/dist/bin/solaxis.js",
+    "solaxis": "node ./cli/dist/bin/solaxis.js",
     "app": "pnpm --filter @solaxis/app",
     "shared": "pnpm --filter @solaxis/shared",
     "sdk": "pnpm --filter @solaxis/sdk"
