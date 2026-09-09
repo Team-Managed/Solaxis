@@ -6,11 +6,11 @@ Update this file whenever the current phase, active unit, or implementation stat
 
 ## Current Phase
 
-**Phase 4: Lifecycle Controller Complete — Ready for Developer SDK & CLI Scaffolding**
+**Phase 5: Developer SDK & Custom Functions Complete — Ready for CLI Runner**
 
 ## Current Goal
 
-Unit 01, Unit 03, and Unit 04 implementations verified and complete with 44 shared unit tests and 7 contracts unit tests passing. Ready to proceed to Unit 05 (Developer SDK and Custom Functions) and Unit 06 (Solaxis CLI Runner).
+Unit 01, Unit 03, Unit 04, and Unit 05 implementations verified and complete. `@solaxis/sdk` (with `SolaxisClient`, `defineFunction`, `scaffoldFunctionProject`, `deployProgram`), `solaxis-engine-sdk` Rust crate, and test suites passing. Ready to proceed to Unit 06 (Solaxis CLI Runner).
 
 ---
 
@@ -27,7 +27,7 @@ All specs have been authored to match the Flank benchmark format: zero raw code 
 | **02** | Design System and Tokens | ⏳ Pending | Dark default theme, solar amber & neon emerald tokens, custom primitives without 3rd-party libs |
 | **03** | Solaxis Anchor Engine | ✅ Complete | Anchor 0.32.1 on-chain engine, TaskAccount (79 bytes), initialize, delegate CPI, execute_batch (hash chain loop), undelegate (MagicIntentBundleBuilder), 7 Rust unit tests passing |
 | **04** | Delegation and Lifecycle Controller | ✅ Complete | 5-step lifecycle orchestration, MagicBlock router polling, ER sub-10ms loop, GetCommitmentSignature settlement, telemetry engine, 44 tests passing |
-| **05** | Developer SDK and Custom Functions | ⏳ Pending | Public `@solaxis/sdk` (`SolaxisClient`, `defineFunction`, events), on-chain Rust crate `solaxis-engine-sdk`, project scaffolding |
+| **05** | Developer SDK and Custom Functions | ✅ Complete | Public `@solaxis/sdk` (`SolaxisClient`, `defineFunction`, events, deployer, scaffolder), on-chain Rust crate `solaxis-engine-sdk`, 14 SDK unit tests, 9 Rust tests passing |
 
 ### Developer Tooling & CLI
 
