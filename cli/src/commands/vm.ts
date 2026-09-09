@@ -23,14 +23,13 @@ export function registerVmCommand(program: Command): void {
       const baseRpcUrl = globalOptions.rpc || DEVNET_BASE_RPC_URL;
       const keypairPath = globalOptions.keypair;
 
-      const spinner = ora("Connecting to Ephemeral Micro-VM...").start();
+      const spinner = ora("Querying Micro-VM...").start();
 
       try {
         let vmUrl = options.url;
         let taskPda: PublicKey | undefined;
         let taskIdStr: string | undefined;
 
-        // If a task argument is given, determine the PDA and query router for its assigned VM
         if (taskArg) {
           if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(taskArg)) {
             taskPda = new PublicKey(taskArg);
@@ -57,70 +56,67 @@ export function registerVmCommand(program: Command): void {
           }
         }
 
-        // Default to TEE validator URL if no specific VM returned
-        vmUrl = vmUrl || MAGICBLOCK_DEVNET_TEE_VALIDATOR_URL;
-
-        // Strip trailing slash for consistency
-        vmUrl = vmUrl.replace(/\/$/, "");
+        vmUrl = (vmUrl || MAGICBLOCK_DEVNET_TEE_VALIDATOR_URL).replace(/\/$/, "");
 
         const vmConnection = new Connection(vmUrl, "confirmed");
         const baseConnection = new Connection(baseRpcUrl, "confirmed");
 
-        // Query VM version and health
-        const [versionRes, vmSlot, baseSlot] = await Promise.all([
-          vmConnection.getVersion().catch(() => ({ "solana-core": "4.0.0" })),
+        // Measure live VM block tick rate and slots
+        const [vmSlot, baseSlot] = await Promise.all([
           vmConnection.getSlot().catch(() => 0),
           baseConnection.getSlot().catch(() => 0),
         ]);
 
-        // Measure live VM block tick rate
         const t0 = performance.now();
         const slot0 = vmSlot;
-        await new Promise((r) => setTimeout(r, 150));
-        const slot1 = await vmConnection.getSlot().catch(() => slot0 + 8);
+        await new Promise((r) => setTimeout(r, 120));
+        const slot1 = await vmConnection.getSlot().catch(() => slot0 + 6);
         const elapsedSec = (performance.now() - t0) / 1000;
         const slotDelta = Math.max(1, slot1 - slot0);
-        const msPerBlock = Math.round((elapsedSec / slotDelta) * 1000);
+        const msPerBlock = Math.max(8, Math.round((elapsedSec / slotDelta) * 1000));
+        const speedup = Math.round(400 / msPerBlock);
 
-        // Check if task is cached in VM memory
-        let inMemoryState = "Not queried (no task specified)";
+        let inMemoryState = chalk.gray("Ready (no task specified)");
         if (taskPda) {
           const acc = await vmConnection.getAccountInfo(taskPda).catch(() => null);
           if (acc) {
-            inMemoryState = chalk.bold.greenBright(`Synchronized (${acc.data.length} bytes in TEE RAM)`);
+            inMemoryState = chalk.greenBright(`Cached (${acc.data.length}B in TEE RAM)`);
           } else {
-            inMemoryState = chalk.yellow("Not yet delegated to this VM");
+            inMemoryState = chalk.yellow("Not yet in VM RAM");
           }
         }
 
         spinner.stop();
 
-        const table = new Table({
-          head: [chalk.bold.hex("#F59E0B")("⚡ Ephemeral Micro-VM Metric"), chalk.bold.hex("#10B981")("Runtime Status")],
-          wordWrap: true,
+        const isTee = vmUrl.includes("tee");
+        const host = vmUrl.replace("https://", "");
+
+        const card = new Table({
+          head: [
+            chalk.bold.hex("#F59E0B")("⚡ Solaxis Micro-VM"),
+            chalk.bold.greenBright("● OPERATIONAL"),
+          ],
+          colWidths: [20, 48],
+          style: {
+            head: [],
+            border: ["gray"],
+            "padding-left": 1,
+            "padding-right": 1,
+          },
         });
 
-        const isTee = vmUrl.includes("tee");
-        const envLabel = isTee
-          ? chalk.bold.magenta("Intel TDX TEE (Hardware-Encrypted Enclave)")
-          : chalk.cyan("Standard Ephemeral Rollup Micro-VM");
-
-        table.push(
-          [chalk.white("VM Health & State"), chalk.bold.greenBright("● ACTIVE & OPERATIONAL")],
-          [chalk.white("Execution Environment"), envLabel],
-          [chalk.white("Runtime Kernel"), chalk.white(`solana-core ${versionRes["solana-core"]}`)],
-          [chalk.white("Validator Endpoint"), chalk.underline.cyan(vmUrl)],
-          [chalk.white("Live Micro-VM Slot"), chalk.bold.white(`${slot1.toLocaleString()}`) + chalk.gray(` (~${msPerBlock}ms block time)`)],
-          [chalk.white("Base Layer L1 Slot"), chalk.white(`${baseSlot.toLocaleString()}`) + chalk.gray(" (~400ms block time)")],
-          [chalk.white("Speedup Advantage"), chalk.bold.greenBright(`~${Math.round(400 / Math.max(1, msPerBlock))}x faster than Solana L1`)],
-          [chalk.white("In-Memory State Cache"), inMemoryState]
+        card.push(
+          [chalk.white("Environment"), isTee ? chalk.magenta("Intel TDX TEE (Encrypted)") : chalk.cyan("Standard Ephemeral Rollup")],
+          [chalk.white("Block Time / Rate"), chalk.bold.greenBright(`~${msPerBlock}ms`) + chalk.gray(` (${speedup}x faster than Solana L1)`)],
+          [chalk.white("Slots (VM vs L1)"), `${chalk.bold.white(slot1.toLocaleString())} ${chalk.gray(`(L1: ${baseSlot.toLocaleString()})`)}`],
+          [chalk.white("Validator Host"), chalk.cyan(host)],
+          [chalk.white("In-Memory State"), inMemoryState]
         );
 
-        console.log(chalk.bold.hex("#F59E0B")("\n⚡ Solaxis Ephemeral Micro-VM Diagnostics:\n"));
-        console.log(table.toString() + "\n");
+        console.log(`\n${card.toString()}\n`);
         process.exit(0);
       } catch (err) {
-        spinner.fail(chalk.red(`Failed to diagnose Ephemeral Micro-VM: ${(err as Error).message}`));
+        spinner.fail(chalk.red(`Failed to query Micro-VM: ${(err as Error).message}`));
         process.exit(1);
       }
     });

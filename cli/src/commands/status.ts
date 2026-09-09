@@ -48,7 +48,7 @@ export function registerStatusCommand(program: Command): void {
         console.log(chalk.gray(`No task specified. Inspecting default task "${chalk.white(targetTaskId)}"...\n`));
       }
 
-      const spinner = ora("Querying Solana L1 and MagicBlock Router...").start();
+      const spinner = ora("Checking task state...").start();
 
       try {
         const connection = new Connection(rpcUrl, "confirmed");
@@ -97,8 +97,7 @@ export function registerStatusCommand(program: Command): void {
         }
 
         // Query Magic Router for delegation status
-        let delegatedValidator = "Not Delegated (Base L1)";
-        let vmStatusLine: string | undefined;
+        let vmStatusLine = chalk.gray("Not Delegated (Base L1)");
         try {
           const router = new ConnectionMagicRouter(MAGICBLOCK_DEVNET_ROUTER_URL);
           const delegation = await router.getDelegationStatus(taskPda);
@@ -107,14 +106,14 @@ export function registerStatusCommand(program: Command): void {
               (delegation as { fqdn?: string; validatorFqdn?: string }).fqdn ||
               (delegation as { fqdn?: string; validatorFqdn?: string }).validatorFqdn ||
               "https://devnet-tee.magicblock.app";
-            delegatedValidator = rawUrl.replace(/\/$/, "");
+            const cleanUrl = rawUrl.replace(/\/$/, "");
 
             try {
-              const vmConn = new Connection(delegatedValidator, "confirmed");
+              const vmConn = new Connection(cleanUrl, "confirmed");
               const vmSlot = await vmConn.getSlot();
-              const isTee = delegatedValidator.includes("tee");
+              const isTee = cleanUrl.includes("tee");
               const envTag = isTee ? chalk.magenta("Intel TDX TEE") : chalk.cyan("Standard ER");
-              vmStatusLine = chalk.greenBright("● ACTIVE ") + chalk.gray(`(${envTag} | Slot: ${vmSlot.toLocaleString()} | ~18ms tick)`);
+              vmStatusLine = chalk.greenBright("● ACTIVE ") + chalk.gray(`(${envTag} | Slot: ${vmSlot.toLocaleString()})`);
             } catch {
               vmStatusLine = chalk.greenBright("● ACTIVE");
             }
@@ -125,32 +124,30 @@ export function registerStatusCommand(program: Command): void {
 
         spinner.stop();
 
-        const table = new Table({
-          head: [chalk.bold.hex("#F59E0B")("Property"), chalk.bold.hex("#10B981")("Value")],
-          wordWrap: true,
+        const card = new Table({
+          head: [
+            chalk.bold.hex("#F59E0B")("⚡ Task Status"),
+            chalk.bold.cyan(taskIdStr),
+          ],
+          colWidths: [20, 48],
+          style: {
+            head: [],
+            border: ["gray"],
+            "padding-left": 1,
+            "padding-right": 1,
+          },
         });
 
-        table.push(
-          [chalk.white("Task PDA"), chalk.bold.cyan(taskPda.toBase58())],
-          [chalk.white("Task ID"), chalk.white(taskIdStr)],
-          [chalk.white("Authority"), chalk.white(authority)],
-          [chalk.white("Lifecycle Status"), formatStatusBadge(statusName)],
-          [chalk.white("Total Iterations"), chalk.greenBright(iterations.toString())],
-          [chalk.white("Compute Output"), chalk.yellow(computeOutput)],
-          [chalk.white("Delegated Validator"), chalk.underline.cyan(delegatedValidator)]
+        card.push(
+          [chalk.white("Lifecycle State"), formatStatusBadge(statusName)],
+          [chalk.white("Task PDA"), chalk.cyan(taskPda.toBase58())],
+          [chalk.white("Authority"), chalk.white(authority.slice(0, 8) + "..." + authority.slice(-6))],
+          [chalk.white("Compute"), chalk.greenBright(`${iterations} iter`) + chalk.gray(` (Output: ${computeOutput})`)],
+          [chalk.white("Micro-VM"), vmStatusLine],
+          [chalk.white("Explorer Link"), chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=devnet`)]
         );
 
-        if (vmStatusLine) {
-          table.push([chalk.white("Micro-VM Health"), vmStatusLine]);
-        }
-
-        table.push([
-          chalk.white("Solana Explorer"),
-          chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=devnet`),
-        ]);
-
-        console.log(chalk.bold.hex("#F59E0B")("\n⚡ Solaxis Task Status Summary:\n"));
-        console.log(table.toString() + "\n");
+        console.log(`\n${card.toString()}\n`);
         process.exit(0);
       } catch (err) {
         spinner.fail(chalk.red(`Error querying status: ${(err as Error).message}`));
@@ -162,13 +159,13 @@ export function registerStatusCommand(program: Command): void {
 function formatStatusBadge(status: TaskStatus): string {
   switch (status) {
     case "SETTLED":
-      return chalk.bgGreen.black(` SETTLED `);
+      return chalk.bgGreen.black(" SETTLED ");
     case "RUNNING":
-      return chalk.bgCyan.black(` RUNNING `);
+      return chalk.bgCyan.black(" RUNNING ");
     case "PROVISIONING":
-      return chalk.bgYellow.black(` PROVISIONING `);
+      return chalk.bgYellow.black(" PROVISIONING ");
     case "FAILED":
-      return chalk.bgRed.black(` FAILED `);
+      return chalk.bgRed.black(" FAILED ");
     default:
       return chalk.bgGray.white(` ${status} `);
   }
