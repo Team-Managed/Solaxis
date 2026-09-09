@@ -123,4 +123,20 @@ describe("Built-In Functions Catalog", () => {
     const nonExistent = getBuiltinFunction("does-not-exist");
     expect(nonExistent).toBeUndefined();
   });
+
+  it("resolves friendly function aliases seamlessly", () => {
+    const priceFeed = getBuiltinFunction("price-feed");
+    expect(priceFeed).toBeDefined();
+    expect(priceFeed?.name).toBe("price-feed");
+
+    const orderbook = getBuiltinFunction("orderbook");
+    expect(orderbook).toBeDefined();
+
+    const monteCarlo = getBuiltinFunction("monte-carlo");
+    expect(monteCarlo).toBeDefined();
+    expect(monteCarlo?.name).toBe("monte-carlo");
+
+    const hasher = getBuiltinFunction("hasher");
+    expect(hasher).toBeDefined();
+  });
 });

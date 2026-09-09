@@ -23,18 +23,29 @@ const STATUS_MAP: Record<number, TaskStatus> = {
 
 export function registerStatusCommand(program: Command): void {
   program
-    .command("status")
+    .command("status [target]")
     .description("Inspect on-chain state and delegation status of a Solaxis Task PDA")
     .option("-t, --task-id <id>", "Task ID (string or number)")
     .option("-p, --pda <pubkey>", "Task PDA public key")
-    .action(async (options, cmd) => {
+    .action(async (targetArg, options, cmd) => {
       const globalOptions = cmd.optsWithGlobals();
       const rpcUrl = globalOptions.rpc || DEVNET_BASE_RPC_URL;
       const keypairPath = globalOptions.keypair;
 
-      if (!options.taskId && !options.pda) {
-        console.error(chalk.red("Error: Must provide either --task-id <id> or --pda <pubkey>."));
-        process.exit(2);
+      let targetPdaStr = options.pda;
+      let targetTaskId = options.taskId;
+
+      if (targetArg && typeof targetArg === "string") {
+        if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(targetArg)) {
+          targetPdaStr = targetArg;
+        } else {
+          targetTaskId = targetArg;
+        }
+      }
+
+      if (!targetTaskId && !targetPdaStr) {
+        targetTaskId = "demo-task";
+        console.log(chalk.gray(`No task specified. Inspecting default task "${chalk.white(targetTaskId)}"...\n`));
       }
 
       const spinner = ora("Querying Solana L1 and MagicBlock Router...").start();
@@ -42,28 +53,35 @@ export function registerStatusCommand(program: Command): void {
       try {
         const connection = new Connection(rpcUrl, "confirmed");
         let taskPda: PublicKey;
+        let taskIdStr = targetTaskId || "Unknown";
 
-        if (options.pda) {
-          taskPda = new PublicKey(options.pda);
+        if (targetPdaStr) {
+          taskPda = new PublicKey(targetPdaStr);
+          taskIdStr = `pda:${targetPdaStr.slice(0, 6)}...`;
         } else {
           const { keypair } = await loadKeypair(keypairPath);
-          const derived = deriveTaskPda(DEFAULT_PROGRAM_ID, keypair.publicKey, String(options.taskId));
+          const derived = deriveTaskPda(DEFAULT_PROGRAM_ID, keypair.publicKey, String(targetTaskId));
           taskPda = derived.pda;
         }
 
         const accountInfo = await connection.getAccountInfo(taskPda);
 
         if (!accountInfo) {
-          spinner.fail(chalk.yellow(`Task PDA ${taskPda.toBase58()} not found on ${rpcUrl}.`));
-          console.log(chalk.gray("\nThe task has not been initialized yet. Run 'solaxis init' first.\n"));
-          process.exit(1);
+          spinner.info(chalk.yellow(`Task PDA ${taskPda.toBase58()} not yet found on L1.`));
+          console.log(
+            chalk.gray(
+              `\n💡 Quick actions:\n` +
+                `   • Initialize this task:   ${chalk.cyan(`pnpm solaxis init ${taskIdStr}`)}\n` +
+                `   • Run a micro-instance:   ${chalk.cyan(`pnpm solaxis invoke price-feed --iterations 50`)}\n`
+            )
+          );
+          process.exit(0);
         }
 
         // Parse account data
         // 8-byte discriminator + 32 authority + 8 task_id + 1 status + 4 iterations + 8 compute_output
         const data = accountInfo.data;
         let authority = "Unknown";
-        let taskIdStr = options.taskId || "Unknown";
         let statusName: TaskStatus = "IDLE";
         let iterations = 0;
         let computeOutput = "0";
@@ -84,7 +102,8 @@ export function registerStatusCommand(program: Command): void {
           const router = new ConnectionMagicRouter(MAGICBLOCK_DEVNET_ROUTER_URL);
           const delegation = await router.getDelegationStatus(taskPda);
           if (delegation && delegation.isDelegated) {
-            delegatedValidator = (delegation as { fqdn?: string; validatorFqdn?: string }).fqdn ||
+            delegatedValidator =
+              (delegation as { fqdn?: string; validatorFqdn?: string }).fqdn ||
               (delegation as { fqdn?: string; validatorFqdn?: string }).validatorFqdn ||
               "Delegated to MagicBlock ER";
           }

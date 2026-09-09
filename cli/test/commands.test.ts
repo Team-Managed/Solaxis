@@ -48,4 +48,27 @@ describe("CLI Command Registration", () => {
     expect(optionFlags?.some((f) => f.includes("-t, --task-id"))).toBe(true);
     expect(optionFlags?.some((f) => f.includes("-p, --pda"))).toBe(true);
   });
+
+  it("supports optional positional function argument on invoke", () => {
+    const program = new Command();
+    registerInvokeCommand(program);
+
+    const invokeCmd = program.commands.find((c) => c.name() === "invoke");
+    expect(invokeCmd).toBeDefined();
+    // Commander defines registered arguments
+    const args = (invokeCmd as any)._args;
+    expect(args?.length).toBeGreaterThanOrEqual(1);
+    expect(args[0].name()).toBe("function");
+  });
+
+  it("supports optional positional target argument on status", () => {
+    const program = new Command();
+    registerStatusCommand(program);
+
+    const statusCmd = program.commands.find((c) => c.name() === "status");
+    expect(statusCmd).toBeDefined();
+    const args = (statusCmd as any)._args;
+    expect(args?.length).toBeGreaterThanOrEqual(1);
+    expect(args[0].name()).toBe("target");
+  });
 });

@@ -127,6 +127,35 @@ export const BUILTIN_FUNCTIONS: FunctionDefinition[] = [
   sessionCounter,
 ];
 
+const FUNCTION_ALIASES: Record<string, string> = {
+  "price-feed": "session-counter",
+  "pricefeed": "session-counter",
+  "oracle": "session-counter",
+  "orderbook": "session-counter",
+  "monte-carlo": "batch-risk-simulator",
+  "risk": "batch-risk-simulator",
+  "risk-simulator": "batch-risk-simulator",
+  "batch-risk-simulator": "batch-risk-simulator",
+  "hasher": "confidential-state-hasher",
+  "zk-hasher": "confidential-state-hasher",
+  "confidential-state-hasher": "confidential-state-hasher",
+  "counter": "session-counter",
+  "session-counter": "session-counter",
+};
+
 export function getBuiltinFunction(name: string): FunctionDefinition | undefined {
-  return BUILTIN_FUNCTIONS.find((fn) => fn.name === name);
+  const normalized = name.toLowerCase().trim();
+  const direct = BUILTIN_FUNCTIONS.find((fn) => fn.name === normalized);
+  if (direct) return direct;
+  const canonicalName = FUNCTION_ALIASES[normalized];
+  if (canonicalName) {
+    const base = BUILTIN_FUNCTIONS.find((fn) => fn.name === canonicalName);
+    if (base) {
+      return {
+        ...base,
+        name: normalized,
+      };
+    }
+  }
+  return undefined;
 }
