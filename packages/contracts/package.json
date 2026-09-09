@@ -1,0 +1,12 @@
+{
+  "name": "@solaxis/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solaxis Anchor Engine Smart Contract Workspace",
+  "scripts": {
+    "build": "echo 'Anchor build will be configured in Unit 03'",
+    "typecheck": "echo 'No TypeScript in contracts'",
+    "test": "echo 'Contract tests will be configured in Unit 03'",
+    "lint": "echo 'Contract linting will be configured in Unit 03'"
+  }
+}
