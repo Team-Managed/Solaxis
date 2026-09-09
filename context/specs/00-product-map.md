@@ -44,8 +44,9 @@ The execution loop is deterministic and verifiable. The initial state exists on 
 | Delegation Program | MagicBlock Delegation Program on Solana Devnet (`DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh`) |
 | Router & Discovery | MagicBlock Router (`https://devnet-router.magicblock.app`) querying `getDelegationStatus` |
 | Monorepo Manager | pnpm workspaces (Node.js 20+) |
+| Developer SDK | `@solaxis/sdk` (TypeScript client SDK) + `solaxis-engine-sdk` (Rust Anchor crate) |
 | Shared Layer | Internal TypeScript contracts package (`packages/shared`) with Zod schemas |
-| CLI Runner | Standalone Commander.js executable (`packages/cli`) with Chalk and Ora |
+| CLI Runner | Standalone Commander.js executable (`packages/cli`) with Chalk, Ora, and scaffolding |
 | Developer Console | Next.js 15 (App Router) + React Server Components + Client Hooks |
 | Styling & Theme | Tailwind CSS + CSS Custom Properties (Deep Obsidian, Solar Amber, Neon Emerald) |
 | UI Primitives | Custom hand-crafted components (Button, Card, Badge, Skeleton, Sheet, Terminal) |
@@ -56,8 +57,8 @@ The execution loop is deterministic and verifiable. The initial state exists on 
 1. **Undelegation Callback Guarantee.** The Anchor smart contract must place the `#[ephemeral]` macro immediately preceding `#[program]`. This injects the mandatory undelegation callback processor with discriminator `[196, 28, 41, 206, 48, 37, 51, 167]`. Without this macro, the MagicBlock Delegation Program cannot return PDA ownership back to the Solaxis engine upon commit.
 2. **Modern Intent Bundle Settlement.** Always decorate the undelegate context with `#[commit]` (which injects `magic_context` and `magic_program`) and use `MagicIntentBundleBuilder.commit_and_undelegate` from the modern Ephemeral Rollups SDK. Never use deprecated `commit_accounts` or `commit_and_undelegate_accounts` instructions. Extract the L1 settlement signature via `GetCommitmentSignature(erTxHash, erConnection)`.
 3. **Dynamic Router Discovery.** Client code must never hardcode static regional rollup URLs or assume validator availability. All client runners must query `router.getDelegationStatus(taskPda)` against the MagicBlock router endpoint to discover the active validator fully-qualified domain name (FQDN).
-4. **Three Clean Deployables.** The repository contains exactly three deliverable packages: `packages/contracts` (Anchor smart contract), `packages/cli` (standalone Node.js CLI runner), and `packages/app` (Next.js Developer Console web application). They share schemas and types through `packages/shared` and do not import each other's runtime code.
-5. **No Separate Standalone SDK Package.** Client execution logic belongs in `packages/shared` and directly uses `@magicblock-labs/ephemeral-rollups-sdk`. We do not publish or maintain a redundant custom SDK abstraction.
+4. **Clean Monorepo Deployables.** The repository contains dedicated packages: `packages/contracts` (Anchor smart contract & Rust crate), `packages/sdk` (TypeScript Developer SDK), `packages/cli` (CLI runner with scaffolding & deploy), `packages/app` (Next.js Developer Console), and `packages/shared` (internal contracts and schemas).
+5. **First-Class Developer SDK.** Solaxis provides `@solaxis/sdk` for client-side orchestration, custom function definition (`defineFunction`), and real-time execution streaming, paired with `solaxis-engine-sdk` Rust crate for authoring custom on-chain compute kernels.
 6. **No Centralized Cloud Infrastructure.** Execution occurs purely on-chain (Solana L1) and on decentralized rollup validators (MagicBlock ER / TEE). No AWS Lambda, EC2, Cloudflare Workers, or centralized databases are permitted in the execution path.
 7. **Every Invocation Generates Verifiable Proof.** Every completed run must produce valid Solana Explorer transaction signatures for both the initial delegation on L1 and the final state settlement on L1.
 8. **Deterministic Millisecond Telemetry.** Duration metrics for Spin-up, Ephemeral Execution, and Teardown must be captured with millisecond accuracy using monotonic performance clocks, never estimated or mock-generated.
@@ -69,13 +70,15 @@ The Solaxis architecture is divided into specialized subsystems that coordinate 
 | # | Subsystem | Responsibility | Writes / Outputs |
 | --- | --- | --- | --- |
 | 1 | **Anchor Engine** (`solaxis-engine`) | On-chain Anchor program defining PDA state, delegation CPI, compute loops, and settlement | `TaskAccount` PDA state on Solana Devnet |
-| 2 | **Shared Contracts** (`packages/shared`) | Canonical Zod schemas, inferred types, PDA derivation utilities, and RPC constants | Shared validation contracts and constants |
-| 3 | **Lifecycle Controller** | Orchestration engine managing L1 initialization, delegation, router polling, ER execution, and undelegation | Observable lifecycle events and telemetry payloads |
-| 4 | **CLI Runner** (`packages/cli`) | Standalone terminal command runner with formatted spinners, tables, and exit codes | Terminal output, JSON telemetry exports |
-| 5 | **Console App Shell** (`packages/app`) | Next.js 15 Web3 application shell, wallet provider, navigation, and layout grid | Interactive developer dashboard |
-| 6 | **Lifecycle Visualizer** | Real-time 4-stage visual pipeline with animated SVG energy tracks and millisecond stopwatches | Visual execution progress and stage states |
-| 7 | **CloudWatch Terminal** | Decentralized streaming JSON-RPC log viewer with level filtering and auto-scroll | Real-time console log stream |
-| 8 | **Benchmark & Explorer Verifier** | Side-by-side cost and latency comparison analytics with direct Solana Explorer proof links | Verifiable performance cards and shareable reports |
+| 2 | **Rust Function Crate** (`solaxis-engine-sdk`) | On-chain traits, macros, and CPI helpers for developers building custom Anchor compute kernels | Reusable Anchor compute modules |
+| 3 | **Shared Contracts** (`packages/shared`) | Canonical Zod schemas, inferred types, PDA derivation utilities, and RPC constants | Shared validation contracts and constants |
+| 4 | **Developer SDK** (`packages/sdk`) | Public TypeScript client SDK (`@solaxis/sdk`) with `SolaxisClient`, `defineFunction`, and event streams | Programmatic API for dApps and runners |
+| 5 | **Lifecycle Controller** | Orchestration engine managing L1 initialization, delegation, router polling, ER execution, and undelegation | Observable lifecycle events and telemetry payloads |
+| 6 | **CLI Runner** (`packages/cli`) | Standalone terminal command runner with scaffolding (`new`, `deploy`), formatted spinners, tables, and exit codes | Terminal output, JSON telemetry exports |
+| 7 | **Console App Shell** (`packages/app`) | Next.js 15 Web3 application shell, wallet provider, navigation, and layout grid | Interactive developer dashboard |
+| 8 | **Lifecycle Visualizer** | Real-time 4-stage visual pipeline with animated SVG energy tracks and millisecond stopwatches | Visual execution progress and stage states |
+| 9 | **CloudWatch Terminal** | Decentralized streaming JSON-RPC log viewer with level filtering and auto-scroll | Real-time console log stream |
+| 10 | **Benchmark & Explorer Verifier** | Side-by-side cost and latency comparison analytics with direct Solana Explorer proof links | Verifiable performance cards and shareable reports |
 
 ## 5. Domain Vocabulary
 
@@ -137,7 +140,7 @@ The developer CLI tool invoked via `solaxis <command>`. Commands include:
 ## 8. Non-Goals
 
 - No centralized backend services, cloud databases, or AWS Lambda functions. Solaxis is exclusively Web3 native.
-- No separate standalone SDK package. Client logic lives in the monorepo's shared package and leverages official MagicBlock SDKs.
+- No arbitrary untrusted WASM/JS sandbox in the on-chain kernel. All custom compute functions are compiled to native Solana SBF bytecode via Anchor or orchestrated via `@solaxis/sdk`.
 - No custodial wallet management or server-side private key storage for Web Console users. All web transactions are signed by the user's browser wallet.
 - No closed-source off-chain compute. All computation runs inside open Ephemeral Rollup validators or verifiable Intel TDX TEE enclaves.
 - No Mainnet deployment in v1. All implementation, contracts, and tests target Solana Devnet and MagicBlock Devnet infrastructure.
@@ -151,15 +154,16 @@ The developer CLI tool invoked via `solaxis <command>`. Commands include:
 **Core Engine**
 - 03 Solaxis Anchor Engine
 - 04 Delegation and Lifecycle Controller
+- 05 Developer SDK and Custom Functions
 
 **Terminal Runner**
-- 05 Solaxis CLI Runner
+- 06 Solaxis CLI Runner
 
 **Developer Console**
-- 06 Web Console App Shell
-- 07 Live Lifecycle Visualizer
-- 08 Decentralized CloudWatch Stream
-- 09 Benchmark and Explorer Verification
+- 07 Web Console App Shell
+- 08 Live Lifecycle Visualizer
+- 09 Decentralized CloudWatch Stream
+- 10 Benchmark and Explorer Verification
 
 **Verification & Quality**
-- 10 Devnet E2E Verification and CI
+- 11 Devnet E2E Verification and CI

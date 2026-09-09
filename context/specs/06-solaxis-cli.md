@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
-Also read `01-architecture-and-shared-contracts.md` and `04-delegation-and-lifecycle-controller.md`.
+Also read `01-architecture-and-shared-contracts.md`, `04-delegation-and-lifecycle-controller.md`, and `05-developer-sdk-and-custom-functions.md`.
 
-Build the standalone Node.js command-line interface (`solaxis`) in `packages/cli`. The CLI provides terminal commands for task initialization, status inspection, and full lifecycle execution with animated spinners and ASCII telemetry summaries. Leave web UI components to units 06-09.
+Build the standalone Node.js command-line interface (`solaxis`) in `packages/cli`. The CLI provides terminal commands for project scaffolding (`solaxis new`), task initialization, status inspection, full lifecycle execution, and custom function deployment with animated spinners and ASCII telemetry summaries. Leave web UI components to units 07-10.
 
 ## Implementation
 
@@ -46,11 +46,9 @@ Build the standalone Node.js command-line interface (`solaxis`) in `packages/cli
 - Do not write to centralized databases or create telemetry tracking files outside the current terminal session.
 - Do not allow unhandled promise rejections to crash the CLI without formatted error output.
 
-## Notes
-
-- The CLI uses the same `LifecycleController` from `packages/shared` that powers the Web Console.
+- The CLI consumes `@solaxis/sdk` for function resolution, scaffolding, and lifecycle orchestration.
 - Keypair loading should check the default Solana CLI configuration path before failing.
-- Depends on: 00, 01, 04. Required before: 10.
+- Depends on: 00, 01, 04, 05. Required before: 11.
 
 ## Check When Done
 

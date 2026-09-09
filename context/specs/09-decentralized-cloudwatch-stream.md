@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
-Also read `02-design-system-and-tokens.md`, `04-delegation-and-lifecycle-controller.md`, and `06-web-console-app-shell.md`.
+Also read `02-design-system-and-tokens.md`, `04-delegation-and-lifecycle-controller.md`, and `07-web-console-app-shell.md`.
 
-Build the Decentralized CloudWatch Stream component in `packages/app`. Provide a real-time streaming JSON-RPC log terminal with monospace typography, log-level filtering, search capabilities, auto-scroll pinning, and export affordances. Leave benchmark analytics to unit 09.
+Build the Decentralized CloudWatch Stream component in `packages/app`. Provide a real-time streaming JSON-RPC log terminal with monospace typography, log-level filtering, search capabilities, auto-scroll pinning, and export affordances. Leave benchmark analytics to unit 10.
 
 ## Implementation
 
@@ -41,7 +41,7 @@ Build the Decentralized CloudWatch Stream component in `packages/app`. Provide a
 
 - Keep rendering performant: use virtualized lists or memoized rows if log volume exceeds hundreds of lines.
 - Ensure log timestamps reflect true monotonic arrival times.
-- Depends on: 00, 02, 04, 06. Required before: 09.
+- Depends on: 00, 02, 04, 05, 07. Required before: 10.
 
 ## Check When Done
 

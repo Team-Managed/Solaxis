@@ -57,8 +57,10 @@ flowchart TD
 | # | Deliverable | Technology | Role |
 |---|---|---|---|
 | 1 | **On-Chain Engine** | Anchor 0.30+ / Rust / `ephemeral-rollups-sdk` | Deployed on Solana Devnet. Implements `#[ephemeral]`, `#[delegate]`, `initialize`, `delegate`, `execute_batch`, and `undelegate` via `MagicIntentBundleBuilder`. |
-| 2 | **Standalone CLI Tool** | Node.js / TypeScript / `@magicblock-labs/ephemeral-rollups-sdk` | Terminal command-line runner (`solaxis init`, `solaxis status`, `solaxis invoke`). Provides live ASCII spinner, telemetry tables, and Explorer links. |
-| 3 | **Web Developer Console** | Next.js (App Router) / Tailwind CSS / Lucide / Solana Wallet Adapter | Futuristic dark-mode dashboard featuring function catalog, 4-stage visual pipeline, decentralized CloudWatch log terminal, and benchmark comparison cards. |
+| 2 | **TypeScript Developer SDK** | Node.js / TypeScript (`@solaxis/sdk`) | Client SDK enabling developers to define custom serverless functions, drive delegation, stream execution events, and settle on L1. |
+| 3 | **Rust Function Crate** | Rust / Anchor (`solaxis-engine-sdk`) | On-chain traits and macros allowing developers to author custom Anchor programs that run inside Ephemeral Rollups. |
+| 4 | **Standalone CLI Tool** | Node.js / TypeScript / `@solaxis/sdk` | Terminal command-line runner (`solaxis new`, `solaxis init`, `solaxis status`, `solaxis invoke`, `solaxis deploy`). Provides live ASCII spinner, telemetry tables, and Explorer links. |
+| 5 | **Web Developer Console** | Next.js (App Router) / Tailwind CSS / Lucide / Solana Wallet Adapter | Futuristic dark-mode dashboard featuring function catalog, 4-stage visual pipeline, decentralized CloudWatch log terminal, and benchmark comparison cards. |
 
 ---
 
@@ -66,9 +68,13 @@ flowchart TD
 
 | ID | Interface | Description |
 |---|---|---|
-| **CLI-1** | `solaxis init` | Creates and funds a new task state PDA on Solana Devnet. |
-| **CLI-2** | `solaxis status` | Queries MagicBlock Router (`devnet-router.magicblock.app`) for delegation status and active ER endpoint. |
-| **CLI-3** | `solaxis invoke` | Executes the full lifecycle: delegates PDA, runs compute loop on ER, undelegates, and outputs latency/gas metrics. |
+| **CLI-1** | `solaxis new <name>` | Scaffolds a new custom Solaxis micro-instance function project. |
+| **CLI-2** | `solaxis init` | Creates and funds a new task state PDA on Solana Devnet. |
+| **CLI-3** | `solaxis status` | Queries MagicBlock Router (`devnet-router.magicblock.app`) for delegation status and active ER endpoint. |
+| **CLI-4** | `solaxis invoke` | Executes the full lifecycle: delegates PDA, runs compute loop on ER, undelegates, and outputs latency/gas metrics. |
+| **CLI-5** | `solaxis deploy` | Builds and deploys a custom Anchor micro-instance function to Solana Devnet. |
+| **SDK-1** | `SolaxisClient` | Core TypeScript client managing connection, PDA derivation, and lifecycle events. |
+| **SDK-2** | `defineFunction` | Developer API for configuring custom function parameters, input schemas, and execution pipelines. |
 | **UI-S1** | **Console Shell** | App header, cluster switcher (`Solana Devnet`), node indicator (`MagicBlock TEE`), and wallet connect button. |
 | **UI-S2** | **Function Catalog** | Pre-configured task templates (`batch-risk-simulator`, `confidential-state-hasher`, `session-counter`). |
 | **UI-S3** | **Invocation Trigger Panel** | Parameter inputs (iterations, seed, task PDA) and prominent "Run Micro-Instance" CTA. |

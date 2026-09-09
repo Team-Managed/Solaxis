@@ -1,5 +1,5 @@
 Read `00-product-map.md` before starting.
-Also read `03-solaxis-anchor-engine.md`, `04-delegation-and-lifecycle-controller.md`, and `05-solaxis-cli.md`.
+Also read `03-solaxis-anchor-engine.md`, `04-delegation-and-lifecycle-controller.md`, `05-developer-sdk-and-custom-functions.md`, and `06-solaxis-cli.md`.
 
 Build the automated end-to-end integration test suite on Solana Devnet + MagicBlock TEE, and configure the continuous integration (CI) workflow. Leave production deployment to post-hackathon phases.
 
@@ -49,8 +49,7 @@ Build the automated end-to-end integration test suite on Solana Devnet + MagicBl
 ## Notes
 
 - Devnet transactions occasionally experience slot congestion; implement retry logic with capped backoff for transaction confirmations.
-- Ensure the test keypair maintains sufficient Devnet SOL balance for rent and transaction fees.
-- Depends on: 00, 01, 03, 04, 05, 09.
+- Depends on: 00, 01, 03, 04, 05, 06, 10.
 
 ## Check When Done
 

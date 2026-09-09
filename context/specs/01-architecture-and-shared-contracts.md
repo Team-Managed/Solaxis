@@ -4,11 +4,12 @@ Establish the repository boundary, package layout, shared Zod schemas, TypeScrip
 
 ## Implementation
 
-1. Create the monorepo workspace layout at `packages/contracts`, `packages/cli`, `packages/app`, and `packages/shared`, configured with root `pnpm-workspace.yaml` and root `package.json`.
-   - Configure `packages/contracts` for Anchor (Rust) smart contract development.
+1. Create the monorepo workspace layout at `packages/contracts`, `packages/sdk`, `packages/cli`, `packages/app`, and `packages/shared`, configured with root `pnpm-workspace.yaml` and root `package.json`.
+   - Configure `packages/contracts` for Anchor (Rust) smart contract development and the `solaxis-engine-sdk` crate.
+   - Configure `packages/sdk` for the public TypeScript Developer SDK (`@solaxis/sdk`).
    - Configure `packages/cli` for the standalone Node.js CLI executable.
    - Configure `packages/app` for the Next.js 15 App Router web console.
-   - Configure `packages/shared` as an internal TypeScript package providing types, validation contracts, constants, and utilities consumed by `cli` and `app`.
+   - Configure `packages/shared` as an internal TypeScript package providing types, validation contracts, constants, and utilities consumed by `sdk`, `cli`, and `app`.
    - Prevent `cli` and `app` from importing each other's source files; all shared code must reside exclusively inside `packages/shared`.
 2. Create `packages/shared/src/constants/network.ts` defining canonical network addresses and endpoints for Solana Devnet and MagicBlock infrastructure.
    - Define the MagicBlock Delegation Program public key as `DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh`.
@@ -27,16 +28,20 @@ Establish the repository boundary, package layout, shared Zod schemas, TypeScrip
 4. Create `packages/shared/src/contracts/invocation.ts` defining Zod schemas for user invocation requests.
    - Define `InvocationRequestSchema` with fields: `functionName` (enumeration of `batch-risk-simulator`, `confidential-state-hasher`, and `session-counter`), `iterations` (integer between 1 and 200, defaulting to 50), `seed` (integer defaulting to 42), and `targetValidator` (enumeration of `standard-er` and `confidential-tee`, defaulting to `confidential-tee`).
    - Define `ProgressEventSchema` with fields: `taskId` (string), `currentIteration` (integer), `totalIterations` (integer), `currentOutput` (string), and `timestamp` (integer).
-5. Create `packages/shared/src/contracts/telemetry.ts` defining Zod schemas for benchmark and execution telemetry.
+5. Create `packages/shared/src/contracts/function.ts` defining Zod schemas for custom function definitions and SDK client configuration.
+   - Define `CustomFunctionManifestSchema` with fields: `name` (regex `^[a-z0-9-]+$`), `version` (semver regex), `description` (string), `targetValidator` (`TargetValidatorSchema`), `defaultIterations` (1 to 200), optional `entrypoint`, and optional `programId`.
+   - Define `SolaxisClientConfigSchema` with fields: `rpcUrl` (string URL), `routerUrl` (string URL), `commitment` (`processed`, `confirmed`, `finalized`), and `cluster` (`devnet`, `localnet`, `custom`).
+   - Export inferred types `CustomFunctionManifest` and `SolaxisClientConfig`.
+6. Create `packages/shared/src/contracts/telemetry.ts` defining Zod schemas for benchmark and execution telemetry.
    - Define `TelemetryMetricsSchema` with fields: `totalDurationMs` (positive number), `spinUpDurationMs` (non-negative number), `erExecutionDurationMs` (non-negative number), `teardownDurationMs` (non-negative number), `iterationsCompleted` (integer), `l1GasSavedPercent` (number between 0 and 100), `estimatedL1CostLamports` (integer), `actualErCostLamports` (integer, strictly zero for ER transactions), `delegationTxSignature` (Solana base58 transaction signature string), `settlementTxSignature` (Solana base58 transaction signature string), and `erEndpointUsed` (string URL).
-6. Create `packages/shared/src/utils/pda.ts` for Program Derived Address derivation and validation.
+7. Create `packages/shared/src/utils/pda.ts` for Program Derived Address derivation and validation.
    - Implement `deriveTaskPda` function taking `programId`, `authority`, and `taskId`, deriving the address using seeds: the string constant `solaxis_task`, the authority public key buffer, and the UTF-8 encoded `taskId` buffer.
    - Return both the derived public key and the bump seed; validate that seeds do not exceed Solana PDA seed length limits.
-7. Create `packages/shared/src/env.ts` with Zod-based environment variable validators for the CLI and Web Console runtimes.
+8. Create `packages/shared/src/env.ts` with Zod-based environment variable validators for the CLI, SDK, and Web Console runtimes.
    - Define `cliEnvSchema` validating `SOLANA_RPC_URL` (optional string URL defaulting to Devnet), `KEYPAIR_PATH` (optional filesystem path to a Solana keypair), and `MAGICBLOCK_ROUTER_URL` (optional string URL defaulting to Devnet router).
    - Define `appEnvSchema` validating `NEXT_PUBLIC_SOLANA_RPC_URL` and `NEXT_PUBLIC_MAGICBLOCK_ROUTER_URL`.
    - Ensure environment validation fails process startup immediately with descriptive field names if invalid configuration is detected.
-8. Create root workspace scripts in root `package.json` for `build`, `lint`, `typecheck`, `test`, and individual package development targets (`pnpm --filter cli ...`, `pnpm --filter app ...`).
+9. Create root workspace scripts in root `package.json` for `build`, `lint`, `typecheck`, `test`, and individual package development targets (`pnpm --filter sdk ...`, `pnpm --filter cli ...`, `pnpm --filter app ...`).
 
 ## Scope Limits
 

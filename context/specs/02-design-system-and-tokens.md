@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
 Also read `01-architecture-and-shared-contracts.md`.
 
-Install the visual design foundation, color tokens, typography, and custom UI primitives for the Solaxis Web Console in `packages/app`. Leave route layouts and feature-specific components to units 06-09.
+Build the visual design foundation, color tokens, typography, and custom UI primitives for the Solaxis Web Console in `packages/app`. Leave route layouts and feature-specific components to units 07-10.
 
 ## Implementation
 
@@ -49,7 +49,7 @@ Install the visual design foundation, color tokens, typography, and custom UI pr
 - Keep all color tokens semantic so theme adjustments never require editing component markup.
 - Ensure high contrast ratios across all text and border elements to satisfy accessibility guidelines.
 - Use tabular numerals (`font-mono tabular-nums`) for all numeric counters, timers, and balances.
-- Depends on: 00, 01. Required before: 06, 07, 08, 09.
+- Depends on: 00, 01. Required before: 07, 08, 09, 10.
 
 ## Check When Done
 

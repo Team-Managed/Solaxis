@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
-Also read `01-architecture-and-shared-contracts.md`, `02-design-system-and-tokens.md`, and `04-delegation-and-lifecycle-controller.md`.
+Also read `01-architecture-and-shared-contracts.md`, `02-design-system-and-tokens.md`, `04-delegation-and-lifecycle-controller.md`, and `05-developer-sdk-and-custom-functions.md`.
 
-Build the Web Console application shell in `packages/app`. Provide the Next.js 15 App Router layout, Solana Wallet Adapter integration, function catalog selection, invocation parameter controls, and responsive grid panels. Leave visualizer tracks, terminal streaming, and benchmark cards to units 07-09.
+Build the Web Console application shell in `packages/app`. Provide the Next.js 15 App Router layout, Solana Wallet Adapter integration, function catalog selection, invocation parameter controls, and responsive grid panels. Leave visualizer tracks, terminal streaming, and benchmark cards to units 08-10.
 
 ## Implementation
 
@@ -34,25 +34,25 @@ Build the Web Console application shell in `packages/app`. Provide the Next.js 1
 6. Create the main console dashboard page at `packages/app/app/page.tsx` and `packages/app/components/console/console-layout.tsx`.
    - Structure a responsive 12-column engineering dashboard grid:
      - Left column (4 columns on desktop): Function Catalog and Invocation Control Panel.
-     - Right column (8 columns on desktop): Top area hosting the Lifecycle Visualizer (Unit 07), middle area hosting the CloudWatch Terminal Stream (Unit 08), and bottom area hosting Benchmark & Explorer Verification (Unit 09).
+     - Right column (8 columns on desktop): Top area hosting the Lifecycle Visualizer (Unit 08), middle area hosting the CloudWatch Terminal Stream (Unit 09), and bottom area hosting Benchmark & Explorer Verification (Unit 10).
    - Support smooth resizing down to tablet breakpoints with vertically stacked cards.
 7. Create the execution state hook in `packages/app/hooks/use-solaxis-execution.ts`.
-   - Interface directly with the `LifecycleController` from `packages/shared`.
+   - Interface directly with the `LifecycleController` from `packages/shared` or `SolaxisClient` from `@solaxis/sdk`.
    - Provide reactive states: `status`, `activeTaskId`, `currentIteration`, `totalIterations`, `telemetry`, `logs`, and `error`.
    - Expose `launch(request: InvocationRequest)` and `reset()` methods to trigger and clear execution runs.
 
 ## Scope Limits
 
-- Do not implement the internal visualizer animations or SVG tracks in this unit (reserved for Unit 07).
-- Do not implement terminal line rendering or log filtering in this unit (reserved for Unit 08).
-- Do not implement benchmark calculation cards in this unit (reserved for Unit 09).
+- Do not implement the internal visualizer animations or SVG tracks in this unit (reserved for Unit 08).
+- Do not implement terminal line rendering or log filtering in this unit (reserved for Unit 09).
+- Do not implement benchmark calculation cards in this unit (reserved for Unit 10).
 - Do not manage private keys in browser storage; all signing delegates to the connected wallet adapter.
 
 ## Notes
 
 - The console layout is designed for data density, presenting controls, visual pipeline, logs, and telemetry simultaneously without tabs or page reloads.
 - Ensure the wallet adapter disconnects and switches networks gracefully without page crashes.
-- Depends on: 00, 01, 02, 04. Required before: 07, 08, 09.
+- Depends on: 00, 01, 02, 04, 05. Required before: 08, 09, 10.
 
 ## Check When Done
 

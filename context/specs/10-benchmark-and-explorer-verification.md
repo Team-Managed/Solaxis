@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
-Also read `04-delegation-and-lifecycle-controller.md`, `06-web-console-app-shell.md`, `07-live-lifecycle-visualizer.md`, and `08-decentralized-cloudwatch-stream.md`.
+Also read `04-delegation-and-lifecycle-controller.md`, `07-web-console-app-shell.md`, `08-live-lifecycle-visualizer.md`, and `09-decentralized-cloudwatch-stream.md`.
 
-Build the Benchmark & Explorer Verification panel in `packages/app`. Render side-by-side cost and latency comparison analytics (Solaxis Ephemeral Rollup vs Traditional Solana L1) and verifiable Solana Explorer transaction proof links. Leave CI workflows to unit 10.
+Build the Benchmark & Explorer Verification panel in `packages/app`. Render side-by-side cost and latency comparison analytics (Solaxis Ephemeral Rollup vs Traditional Solana L1) and verifiable Solana Explorer transaction proof links. Leave CI workflows to unit 11.
 
 ## Implementation
 
@@ -44,7 +44,7 @@ Build the Benchmark & Explorer Verification panel in `packages/app`. Render side
 
 - The benchmark comparison is the core value proof of Solaxis, demonstrating how Ephemeral Rollups eliminate gas costs and block-time friction for high-speed compute.
 - Always use the official Solana Explorer URL format: `https://explorer.solana.com/tx/<signature>?cluster=devnet`.
-- Depends on: 00, 04, 06, 07, 08. Required before: 10.
+- Depends on: 00, 04, 05, 07, 08, 09. Required before: 11.
 
 ## Check When Done
 

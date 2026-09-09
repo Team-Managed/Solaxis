@@ -12,24 +12,29 @@
 | **Styling** | Tailwind CSS + Custom Design Tokens | Dense dark UI, futuristic telemetry animations, solar gradients |
 | **CLI Runtime** | Node.js / Commander / Chalk / Ora | Standalone terminal utility (`solaxis`) |
 | **Solana RPC** | `@solana/web3.js` / Anza Devnet RPC | Base-layer transaction submission, account verification |
-| **Monorepo Layout** | pnpm workspaces | `packages/contracts`, `packages/cli`, `packages/app` |
+| **Monorepo Layout** | pnpm workspaces | `packages/contracts`, `packages/sdk`, `packages/cli`, `packages/app`, `packages/shared` |
 
 ---
 
 ## Deployables & Boundaries
 
-Solaxis is organized as a unified monorepo with 3 distinct packages:
+Solaxis is organized as a unified monorepo with distinct packages:
 
 1. **`packages/contracts`**:
-   - The Solana Anchor program (`solaxis_engine`).
-   - Owns the on-chain state machine, PDA derivations, delegation CPI, and undelegation processors.
+   - The Solana Anchor program (`solaxis_engine`) and reusable on-chain Rust crate (`solaxis-engine-sdk`).
+   - Owns the on-chain state machine, PDA derivations, delegation CPI, undelegation processors, and traits for custom developer compute.
    - Deploys directly to Solana Devnet via Anchor CLI.
-2. **`packages/cli`**:
+2. **`packages/sdk`**:
+   - Public TypeScript Developer SDK (`@solaxis/sdk`).
+   - Exposes `SolaxisClient`, `defineFunction`, lifecycle event hooks, and direct MagicBlock ER/TEE orchestration for external dApps and scripts.
+3. **`packages/cli`**:
    - Standalone Node.js CLI executable (`solaxis`).
-   - Reads Devnet wallet keypair, interacts with MagicBlock router, drives delegation and execution directly from terminal.
-3. **`packages/app`**:
+   - Project scaffolding (`solaxis new`), function deployment (`solaxis deploy`), keypair management, router discovery, and terminal execution.
+4. **`packages/app`**:
    - Next.js Web3 Developer Console.
    - Houses the visual interface, wallet adapter, live 4-stage lifecycle visualizer, streaming log terminal, and benchmark cards.
+5. **`packages/shared`**:
+   - Internal protocol contracts, canonical Zod schemas, network constants, PDA helpers, and environment validators.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -41,9 +46,15 @@ Solaxis is organized as a unified monorepo with 3 distinct packages:
                                    │
                                    ▼
 ┌────────────────────────────────────────────────────────────────────────┐
+│                 TypeScript Developer SDK (packages/sdk)                │
+│   • SolaxisClient + defineFunction + Lifecycle Event Stream            │
+│   • Consumed by packages/cli, packages/app, and external developers    │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
 │                      Solaxis CLI (packages/cli)                        │
-│   • Commander.js + Chalk + Ora                                         │
-│   • Uses @magicblock-labs/ephemeral-rollups-sdk                        │
+│   • Scaffolding (`solaxis new`), deploy, run, and benchmark            │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
           ┌────────────────────────┴────────────────────────┐

@@ -1,7 +1,7 @@
 Read `00-product-map.md` before starting.
-Also read `02-design-system-and-tokens.md`, `04-delegation-and-lifecycle-controller.md`, and `06-web-console-app-shell.md`.
+Also read `02-design-system-and-tokens.md`, `04-delegation-and-lifecycle-controller.md`, and `07-web-console-app-shell.md`.
 
-Build the interactive 4-stage Lifecycle Visualizer component in `packages/app`. The visualizer renders animated pipeline stages, glowing SVG energy tracks, live millisecond timers, and an interactive state inspection drawer. Leave log terminal and benchmark cards to units 08-09.
+Build the interactive 4-stage Lifecycle Visualizer component in `packages/app`. The visualizer renders animated pipeline stages, glowing SVG energy tracks, live millisecond timers, and an interactive state inspection drawer. Leave log terminal and benchmark cards to units 09-10.
 
 ## Implementation
 
@@ -35,15 +35,15 @@ Build the interactive 4-stage Lifecycle Visualizer component in `packages/app`. 
 
 ## Scope Limits
 
-- Do not implement raw terminal text streaming in this component (reserved for Unit 08).
-- Do not render the final benchmark comparison card here (reserved for Unit 09).
+- Do not implement raw terminal text streaming in this component (reserved for Unit 09).
+- Do not render the final benchmark comparison card here (reserved for Unit 10).
 - Do not trigger smart contract transactions directly from visualizer nodes; all state derives reactively from `useSolaxisExecution`.
 
 ## Notes
 
 - Stage duration timers must match the exact telemetry metrics computed by the lifecycle controller.
 - Distinct icon shapes (circle, radar dot, checkmark, triangle) must accompany color changes to ensure accessibility.
-- Depends on: 00, 02, 04, 06. Required before: 09.
+- Depends on: 00, 02, 04, 05, 07. Required before: 10.
 
 ## Check When Done
 
