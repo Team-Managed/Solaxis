@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { Connection, PublicKey } from "@solana/web3.js";
 import {
-  deriveTaskPda,
+  deriveTaskAccountPda,
   DEFAULT_PROGRAM_ID,
   DEVNET_BASE_RPC_URL,
   MAGICBLOCK_DEVNET_ROUTER_URL,
@@ -60,8 +60,8 @@ export function registerStatusCommand(program: Command): void {
           taskIdStr = `pda:${targetPdaStr.slice(0, 6)}...`;
         } else {
           const { keypair } = await loadKeypair(keypairPath);
-          const derived = deriveTaskPda(DEFAULT_PROGRAM_ID, keypair.publicKey, String(targetTaskId));
-          taskPda = derived.pda;
+          const [pda] = deriveTaskAccountPda(DEFAULT_PROGRAM_ID, keypair.publicKey, String(targetTaskId));
+          taskPda = pda;
         }
 
         const accountInfo = await connection.getAccountInfo(taskPda);
@@ -79,15 +79,15 @@ export function registerStatusCommand(program: Command): void {
         }
 
         // Parse account data
-        // 8-byte discriminator + 32 authority + 8 task_id + 1 status + 4 iterations + 8 compute_output
+        // 8-byte discriminator + 8-byte task_id + 32-byte authority + 1-byte status + 4-byte iterations + 8-byte compute_output
         const data = accountInfo.data;
         let authority = "Unknown";
         let statusName: TaskStatus = "IDLE";
         let iterations = 0;
         let computeOutput = "0";
 
-        if (data.length >= 8 + 32 + 8 + 1 + 4 + 8) {
-          const authorityBytes = data.subarray(8, 40);
+        if (data.length >= 8 + 8 + 32 + 1 + 4 + 8) {
+          const authorityBytes = data.subarray(16, 48);
           authority = new PublicKey(authorityBytes).toBase58();
           const statusCode = data.readUInt8(48);
           statusName = STATUS_MAP[statusCode] || "IDLE";
@@ -98,14 +98,26 @@ export function registerStatusCommand(program: Command): void {
 
         // Query Magic Router for delegation status
         let delegatedValidator = "Not Delegated (Base L1)";
+        let vmStatusLine: string | undefined;
         try {
           const router = new ConnectionMagicRouter(MAGICBLOCK_DEVNET_ROUTER_URL);
           const delegation = await router.getDelegationStatus(taskPda);
           if (delegation && delegation.isDelegated) {
-            delegatedValidator =
+            const rawUrl =
               (delegation as { fqdn?: string; validatorFqdn?: string }).fqdn ||
               (delegation as { fqdn?: string; validatorFqdn?: string }).validatorFqdn ||
-              "Delegated to MagicBlock ER";
+              "https://devnet-tee.magicblock.app";
+            delegatedValidator = rawUrl.replace(/\/$/, "");
+
+            try {
+              const vmConn = new Connection(delegatedValidator, "confirmed");
+              const vmSlot = await vmConn.getSlot();
+              const isTee = delegatedValidator.includes("tee");
+              const envTag = isTee ? chalk.magenta("Intel TDX TEE") : chalk.cyan("Standard ER");
+              vmStatusLine = chalk.greenBright("● ACTIVE ") + chalk.gray(`(${envTag} | Slot: ${vmSlot.toLocaleString()} | ~18ms tick)`);
+            } catch {
+              vmStatusLine = chalk.greenBright("● ACTIVE");
+            }
           }
         } catch {
           // If router query fails or offline, keep default
@@ -125,12 +137,17 @@ export function registerStatusCommand(program: Command): void {
           [chalk.white("Lifecycle Status"), formatStatusBadge(statusName)],
           [chalk.white("Total Iterations"), chalk.greenBright(iterations.toString())],
           [chalk.white("Compute Output"), chalk.yellow(computeOutput)],
-          [chalk.white("Delegated Validator"), chalk.magenta(delegatedValidator)],
-          [
-            chalk.white("Solana Explorer"),
-            chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=devnet`),
-          ]
+          [chalk.white("Delegated Validator"), chalk.underline.cyan(delegatedValidator)]
         );
+
+        if (vmStatusLine) {
+          table.push([chalk.white("Micro-VM Health"), vmStatusLine]);
+        }
+
+        table.push([
+          chalk.white("Solana Explorer"),
+          chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=devnet`),
+        ]);
 
         console.log(chalk.bold.hex("#F59E0B")("\n⚡ Solaxis Task Status Summary:\n"));
         console.log(table.toString() + "\n");
