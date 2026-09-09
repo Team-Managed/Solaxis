@@ -71,18 +71,22 @@ Solaxis/
 │   ├── ai-workflow-rules.md
 │   ├── progress-tracker.md
 │   └── specs/
-├── packages/
-│   ├── contracts/                       # Solana Anchor Program
-│   │   ├── Anchor.toml
-│   │   ├── Cargo.toml
-│   │   └── programs/solaxis-engine/src/
-│   ├── cli/                             # Standalone Terminal CLI
-│   │   ├── package.json
-│   │   ├── bin/solaxis.ts
-│   │   └── src/
-│   └── app/                             # Next.js Web Developer Console
-│       ├── package.json
-│       ├── app/
-│       ├── components/
-│       └── lib/
+├── contracts/                       # Solana Anchor Program & solaxis-engine-sdk
+│   ├── Anchor.toml
+│   ├── Cargo.toml
+│   └── programs/solaxis_engine/src/
+├── sdk/                             # Public TypeScript Developer SDK
+│   ├── package.json
+│   └── src/
+├── shared/                          # Protocol schemas, types, constants, PDA helpers
+│   ├── package.json
+│   └── src/
+├── cli/                             # Standalone Terminal CLI
+│   ├── package.json
+│   └── src/
+└── app/                             # Next.js Web Developer Console
+    ├── package.json
+    ├── app/
+    ├── components/
+    └── lib/
 ```

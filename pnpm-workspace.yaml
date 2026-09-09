@@ -1,5 +1,9 @@
 packages:
-  - 'packages/*'
+  - 'contracts'
+  - 'sdk'
+  - 'cli'
+  - 'app'
+  - 'shared'
 
 allowBuilds:
   bufferutil: true

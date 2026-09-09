@@ -4,9 +4,9 @@
   "private": true,
   "description": "Solaxis Anchor Engine Smart Contract Workspace",
   "scripts": {
-    "build": "echo 'Anchor build will be configured in Unit 03'",
+    "build": "anchor build",
     "typecheck": "echo 'No TypeScript in contracts'",
-    "test": "echo 'Contract tests will be configured in Unit 03'",
-    "lint": "echo 'Contract linting will be configured in Unit 03'"
+    "test": "cargo test --manifest-path programs/solaxis_engine/Cargo.toml",
+    "lint": "cargo clippy --manifest-path programs/solaxis_engine/Cargo.toml -- -D warnings"
   }
 }

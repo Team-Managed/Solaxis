@@ -59,7 +59,6 @@ flowchart LR
 ## Repository Structure
 
 ```
-packages/
 ├── sdk/          # Public TypeScript Developer SDK (@solaxis/sdk)
 ├── contracts/    # Solana Anchor smart contract & solaxis-engine-sdk Rust crate
 ├── shared/       # Protocol schemas, types, constants, PDA helpers & validators
@@ -105,7 +104,7 @@ console.log(`Settled in ${metrics.totalDurationMs}ms (Gas Saved: ${metrics.l1Gas
 - **Node.js**: `>= 20.x` with `pnpm` installed (`npm i -g pnpm`)
 - **Rust Toolchain**: `rustc >= 1.79` (`1.89+` / `1.91+` supported)
 - **Solana CLI**: `>= 1.18` configured to Devnet
-- **Anchor CLI**: `anchor 0.30.1`
+- **Anchor CLI**: `anchor 0.32.1`
 *(Note: On Windows, Solana CLI, Rust, and Anchor run via WSL).*
 
 ### Installation
@@ -126,13 +125,13 @@ cp .env.example .env
 
 ```bash
 # Build the Anchor smart contract
-cd packages/contracts && anchor build && cd ../..
+cd contracts && anchor build && cd ..
 
 # Run the standalone CLI
-pnpm --filter cli solaxis invoke --iterations 50
+pnpm --filter @solaxis/cli solaxis invoke --iterations 50
 
 # Launch the Web Developer Console
-pnpm --filter app dev
+pnpm --filter @solaxis/app dev
 ```
 
 ---
