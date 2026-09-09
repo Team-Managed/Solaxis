@@ -26,9 +26,10 @@ Traditional cloud serverless (e.g. AWS Lambda) forces Web3 apps onto centralized
 
 - **Sub-10ms Execution**: Execute rapid state mutations (~65x faster than Solana L1 block times).
 - **Zero-Gas Compute**: 0 Lamports consumed per execution iteration inside the rollup.
+- **Developer SDK Platform**: Define custom serverless functions with `@solaxis/sdk` (`defineFunction`) and on-chain Anchor compute kernels (`solaxis-engine-sdk`).
 - **Confidential Compute**: Hardware-isolated execution via Private Ephemeral Rollups (PER inside Intel TDX TEE enclaves).
 - **Atomic Settlement**: Sealed state commits to L1 in a single transaction with automatic ownership reversion.
-- **Dual Interfaces**: Standalone developer CLI (`solaxis`) and a real-time Web3 Developer Console.
+- **Triple Control Surfaces**: TypeScript Developer SDK (`@solaxis/sdk`), standalone CLI (`solaxis`), and real-time Web3 Developer Console.
 
 ---
 
@@ -59,10 +60,40 @@ flowchart LR
 
 ```
 packages/
-├── contracts/    # Anchor smart contract (solaxis-engine) with #[ephemeral] & #[delegate]
-├── shared/       # Canonical Zod schemas, TypeScript types, constants & LifecycleController
-├── cli/          # Standalone developer CLI (solaxis init / status / invoke)
+├── sdk/          # Public TypeScript Developer SDK (@solaxis/sdk)
+├── contracts/    # Solana Anchor smart contract & solaxis-engine-sdk Rust crate
+├── shared/       # Protocol schemas, types, constants, PDA helpers & validators
+├── cli/          # Developer CLI (solaxis new / init / status / invoke / deploy)
 └── app/          # Next.js 15 Web3 Developer Console (Visualizer & CloudWatch stream)
+```
+
+---
+
+## Developer SDK (`@solaxis/sdk`)
+
+Solaxis allows any developer to author custom serverless compute functions and deploy them to Solana:
+
+```typescript
+import { defineFunction, SolaxisClient } from "@solaxis/sdk";
+
+// 1. Define a custom serverless micro-instance function
+export const riskSimulator = defineFunction({
+  name: "batch-risk-simulator",
+  description: "Monte Carlo asset risk simulation over high-speed ticks",
+  defaultIterations: 50,
+  targetValidator: "confidential-tee", // Runs inside Intel TDX TEE enclave
+});
+
+// 2. Initialize the client and attach real-time event listeners
+const client = new SolaxisClient({ cluster: "devnet" });
+
+client.on("progress", (event) => {
+  console.log(`[Tick ${event.currentIteration}/${event.totalIterations}] Output: ${event.currentOutput}`);
+});
+
+// 3. Invoke end-to-end: L1 delegation -> ER compute loop -> L1 settlement
+const metrics = await client.invoke(riskSimulator, { iterations: 50 });
+console.log(`Settled in ${metrics.totalDurationMs}ms (Gas Saved: ${metrics.l1GasSavedPercent}%)`);
 ```
 
 ---
