@@ -8,3 +8,4 @@ export * from "./env.js";
 export * from "./controller/types.js";
 export * from "./controller/instruction-builders.js";
 export * from "./controller/lifecycle-controller.js";
+export { ConnectionMagicRouter, GetCommitmentSignature } from "@magicblock-labs/ephemeral-rollups-sdk";
