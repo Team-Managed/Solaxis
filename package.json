@@ -1,0 +1,19 @@
+{
+  "name": "solaxis-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.3.4",
+  "scripts": {
+    "build": "pnpm --filter \"@solaxis/*\" run build",
+    "typecheck": "pnpm --filter \"@solaxis/*\" run typecheck",
+    "test": "pnpm --filter \"@solaxis/*\" run test",
+    "lint": "pnpm --filter \"@solaxis/*\" run lint",
+    "cli": "pnpm --filter @solaxis/cli",
+    "app": "pnpm --filter @solaxis/app",
+    "shared": "pnpm --filter @solaxis/shared",
+    "sdk": "pnpm --filter @solaxis/sdk"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
