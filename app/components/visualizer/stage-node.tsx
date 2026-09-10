@@ -68,36 +68,36 @@ export function StageNode({
         "group relative flex flex-col justify-between rounded-xl border p-4 transition-all duration-200 cursor-pointer select-none outline-none",
         // State variants
         isPending &&
-          "border-white/10 bg-graphite-900/60 text-muted-foreground hover:border-white/20 hover:bg-graphite-800/40",
+          "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50 shadow-sm",
         isActive &&
           activePulseColor === "amber" &&
-          "border-amber-500/80 bg-graphite-900/95 shadow-[0_0_20px_-2px_rgba(245,158,11,0.35)]",
+          "border-amber-400 bg-amber-50/80 shadow-md ring-2 ring-amber-400/20",
         isActive &&
           activePulseColor === "emerald" &&
-          "border-emerald-500/80 bg-graphite-900/95 shadow-[0_0_20px_-2px_rgba(16,185,129,0.35)]",
+          "border-emerald-400 bg-emerald-50/80 shadow-md ring-2 ring-emerald-400/20",
         isActive &&
           activePulseColor === "cyan" &&
-          "border-cyan-500/80 bg-graphite-900/95 shadow-[0_0_20px_-2px_rgba(6,182,212,0.35)]",
+          "border-cyan-400 bg-cyan-50/80 shadow-md ring-2 ring-cyan-400/20",
         isCompleted &&
-          "border-emerald-500/40 bg-graphite-900/80 hover:border-emerald-400/60 shadow-[0_0_15px_-4px_rgba(16,185,129,0.2)]",
+          "border-emerald-200 bg-emerald-50/40 hover:border-emerald-300 shadow-sm",
         isError &&
-          "border-red-500/60 bg-red-500/10 text-red-300 shadow-[0_0_15px_-3px_rgba(239,68,68,0.3)]",
+          "border-red-300 bg-red-50 text-red-700 shadow-sm",
         className
       )}
     >
       {/* Header with Stage Number, Icon & Live Timer */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500 font-bold">
             0{index}
           </span>
           <div
             className={cn(
               "flex h-6 w-6 items-center justify-center rounded-md border text-xs transition-colors",
-              isPending && "border-white/10 bg-white/5 text-zinc-500",
-              isActive && "border-amber-400/40 bg-amber-500/20 text-amber-300",
-              isCompleted && "border-emerald-500/40 bg-emerald-500/20 text-emerald-300",
-              isError && "border-red-500/40 bg-red-500/20 text-red-400"
+              isPending && "border-slate-200 bg-slate-100 text-slate-500",
+              isActive && "border-amber-300 bg-amber-100 text-amber-800",
+              isCompleted && "border-emerald-300 bg-emerald-100 text-emerald-800",
+              isError && "border-red-300 bg-red-100 text-red-700"
             )}
           >
             <IconComponent className="h-3.5 w-3.5" />
@@ -113,9 +113,9 @@ export function StageNode({
               size="sm"
             />
           )}
-          {isCompleted && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />}
-          {isError && <AlertTriangle className="h-3.5 w-3.5 text-red-400" />}
-          {isPending && <Circle className="h-3 w-3 text-zinc-600" />}
+          {isCompleted && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
+          {isError && <AlertTriangle className="h-3.5 w-3.5 text-red-500" />}
+          {isPending && <Circle className="h-3 w-3 text-slate-300" />}
 
           <StageTimer
             isActive={isActive}
@@ -128,24 +128,24 @@ export function StageNode({
       <div className="mt-3">
         <h4
           className={cn(
-            "text-xs font-semibold leading-tight transition-colors",
-            isPending && "text-zinc-400 group-hover:text-white",
-            isActive && "text-white",
-            isCompleted && "text-white",
-            isError && "text-red-300"
+            "text-xs font-bold leading-tight transition-colors",
+            isPending && "text-slate-700 group-hover:text-slate-900",
+            isActive && "text-slate-900",
+            isCompleted && "text-slate-900",
+            isError && "text-red-700"
           )}
         >
           {name}
         </h4>
-        <p className="mt-1 text-[11px] text-zinc-500 group-hover:text-zinc-400 line-clamp-1">
+        <p className="mt-1 text-[11px] text-slate-500 group-hover:text-slate-600 line-clamp-1">
           {subtitle}
         </p>
       </div>
 
       {/* Action Prompt */}
-      <div className="mt-2.5 flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-zinc-500 group-hover:text-zinc-400">
+      <div className="mt-2.5 flex items-center justify-between border-t border-slate-100 pt-2 text-[10px] text-slate-400 group-hover:text-amber-600">
         <span>Inspect metadata</span>
-        <span className="font-mono text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="font-mono text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity">
           →
         </span>
       </div>

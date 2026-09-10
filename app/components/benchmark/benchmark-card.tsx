@@ -16,18 +16,18 @@ export function BenchmarkCard() {
   const isCompleted = status === "SETTLED" && telemetry !== null;
 
   return (
-    <div className="space-y-4 rounded-xl border border-white/10 bg-graphite-900/90 p-5 backdrop-blur-md">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-sm">
             <BarChart3 className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">
+            <h3 className="text-sm font-bold text-slate-900">
               Performance & Cost Analytics
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-slate-500">
               Verifiable proof comparing Ephemeral Rollup execution vs Solana Base Layer L1
             </p>
           </div>
@@ -45,7 +45,7 @@ export function BenchmarkCard() {
                 variant="secondary"
                 className="h-7 text-xs gap-1.5"
               >
-                <FileText className="h-3 w-3 text-amber-400" />
+                <FileText className="h-3 w-3 text-amber-600" />
                 View Full Audit Report
               </Button>
             </>
@@ -67,14 +67,14 @@ export function BenchmarkCard() {
           <ExplorerPanel telemetry={telemetry} />
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center p-8 text-center rounded-lg border border-dashed border-white/10 bg-graphite-800/20 py-10">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-zinc-500 mb-3">
+        <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/70 py-10">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-400 mb-3 shadow-sm">
             <BarChart3 className="h-5 w-5" />
           </div>
-          <h4 className="text-sm font-semibold text-white mb-1">
+          <h4 className="text-sm font-bold text-slate-900 mb-1">
             No Execution Metrics Available
           </h4>
-          <p className="text-xs text-muted-foreground max-w-sm">
+          <p className="text-xs text-slate-500 max-w-sm">
             Launch a serverless micro-instance from the Invocation Parameters panel to
             generate verifiable latency benchmarks and Solana Explorer transaction proofs.
           </p>

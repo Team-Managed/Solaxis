@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Keypair } from "@solana/web3.js";
 import {
@@ -9,7 +9,6 @@ import {
   type TaskStatus,
   type ProgressEvent,
   type TelemetryMetrics,
-  type InvocationRequest,
   type FunctionName,
   type TargetValidator,
   type SolaxisWallet,
@@ -21,6 +20,21 @@ export interface LogEntry {
   level: "DEBUG" | "INFO" | "WARN" | "ERROR" | "SPINUP" | "ER-EXEC" | "SETTLE";
   message: string;
   meta?: Record<string, unknown>;
+}
+
+export interface DaemonStatus {
+  connected: boolean;
+  status?: string;
+  task?: string;
+  taskPda?: string;
+  function?: string;
+  environment?: string;
+  uptimeSeconds?: number;
+  ticksCompleted?: number;
+  lastOutput?: string;
+  latencyMs?: number;
+  gasSaved?: string;
+  rollupEndpoint?: string;
 }
 
 export interface ExecutionState {
@@ -35,8 +49,8 @@ export interface ExecutionState {
   isExecuting: boolean;
   selectedFunction: FunctionName;
   iterations: number;
-  seed: number;
-  targetValidator: TargetValidator;
+  daemon: DaemonStatus;
+  tickLatencies: number[];
 }
 
 export function useSolaxisExecution() {
@@ -44,10 +58,6 @@ export function useSolaxisExecution() {
   const wallet = useWallet();
 
   const [selectedFunction, setSelectedFunction] = useState<FunctionName>("batch-risk-simulator");
-  const [iterations, setIterations] = useState<number>(50);
-  const [seed, setSeed] = useState<number>(42);
-  const [targetValidator, setTargetValidator] = useState<TargetValidator>("confidential-tee");
-
   const [status, setStatus] = useState<TaskStatus>("IDLE");
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const [currentIteration, setCurrentIteration] = useState<number>(0);
@@ -57,8 +67,12 @@ export function useSolaxisExecution() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
+  const [daemon, setDaemon] = useState<DaemonStatus>({ connected: false });
+  const [tickLatencies, setTickLatencies] = useState<number[]>([]);
 
   const abortControllerRef = useRef<AbortController | null>(null);
+  const lastDaemonTicksRef = useRef<number>(0);
+  const lastIterTimeRef = useRef<number>(0);
 
   const addLog = useCallback(
     (
@@ -86,6 +100,69 @@ export function useSolaxisExecution() {
     []
   );
 
+  // Background poller for local CLI daemon at http://localhost:8080
+  useEffect(() => {
+    let isCancelled = false;
+
+    const checkDaemon = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/", {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          signal: AbortSignal.timeout(1500),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (isCancelled) return;
+
+          setDaemon({
+            connected: true,
+            status: data.status,
+            task: data.task,
+            taskPda: data.taskPda,
+            function: data.function,
+            environment: data.environment,
+            uptimeSeconds: data.uptimeSeconds,
+            ticksCompleted: data.ticksCompleted,
+            lastOutput: data.lastOutput,
+            latencyMs: data.latencyMs,
+            gasSaved: data.gasSaved,
+            rollupEndpoint: data.rollupEndpoint,
+          });
+
+          // If daemon is active and ticks incremented, stream into logs
+          if (data.ticksCompleted && data.ticksCompleted > lastDaemonTicksRef.current) {
+            lastDaemonTicksRef.current = data.ticksCompleted;
+            setStatus("RUNNING");
+            if (data.taskPda) setActiveTaskId(data.taskPda);
+            setCurrentIteration(data.ticksCompleted);
+            if (data.latencyMs) {
+              setTickLatencies((prev) => [...prev.slice(-49), data.latencyMs!]);
+            }
+            addLog(
+              "ER-EXEC",
+              `[DAEMON:TICK #${data.ticksCompleted}] In-memory SVM execute_batch tick in ${data.latencyMs ?? 12}ms (0 L1 gas)`
+            );
+          }
+        } else {
+          if (!isCancelled) setDaemon({ connected: false });
+        }
+      } catch {
+        if (!isCancelled) setDaemon({ connected: false });
+      }
+    };
+
+    // Check every 2 seconds
+    const interval = setInterval(checkDaemon, 2000);
+    checkDaemon();
+
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, [addLog]);
+
   const reset = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -96,37 +173,37 @@ export function useSolaxisExecution() {
     setCurrentIteration(0);
     setCurrentOutput("");
     setTelemetry(null);
+    setTickLatencies([]);
     setError(null);
     setIsExecuting(false);
     addLog("INFO", "Execution state reset to IDLE.");
   }, [addLog]);
 
+  // Direct trigger for testing or simulating CLI invocation without form inputs
   const launch = useCallback(
-    async (overrideRequest?: Partial<InvocationRequest>) => {
-      const req: InvocationRequest = {
-        functionName: overrideRequest?.functionName ?? selectedFunction,
-        iterations: overrideRequest?.iterations ?? iterations,
-        seed: overrideRequest?.seed ?? seed,
-        targetValidator: overrideRequest?.targetValidator ?? targetValidator,
-      };
+    async (fnName?: FunctionName, defaultIters: number = 50) => {
+      const targetFn = fnName ?? selectedFunction;
+      const targetValidator: TargetValidator =
+        targetFn === "confidential-state-hasher" ? "confidential-tee" : "standard-er";
 
       setError(null);
       setIsExecuting(true);
       setStatus("PROVISIONING");
       setCurrentIteration(0);
-      setTotalIterations(req.iterations);
+      setTotalIterations(defaultIters);
       setTelemetry(null);
+      setTickLatencies([]);
+      lastIterTimeRef.current = performance.now();
 
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
       addLog(
         "SPINUP",
-        `[SPINUP] Initiating micro-instance task for '${req.functionName}' with ${req.iterations} iterations...`
+        `[CLI:INVOKE] Triggering serverless micro-instance '${targetFn}' (${defaultIters} ticks, ${targetValidator})...`
       );
 
       try {
-        // Resolve signer: connected wallet or ephemeral devnet keypair fallback
         let activeSigner: SolaxisWallet | Keypair;
         if (wallet.connected && wallet.publicKey && wallet.signTransaction) {
           activeSigner = {
@@ -134,10 +211,10 @@ export function useSolaxisExecution() {
             signTransaction: wallet.signTransaction.bind(wallet),
             signAllTransactions: wallet.signAllTransactions?.bind(wallet),
           };
-          addLog("INFO", `Using connected wallet: ${wallet.publicKey.toBase58().slice(0, 8)}...`);
+          addLog("INFO", `Signer: connected wallet ${wallet.publicKey.toBase58().slice(0, 8)}...`);
         } else {
           activeSigner = Keypair.generate();
-          addLog("INFO", `Using ephemeral test keypair: ${activeSigner.publicKey.toBase58().slice(0, 8)}...`);
+          addLog("INFO", `Signer: ephemeral session ${activeSigner.publicKey.toBase58().slice(0, 8)}...`);
         }
 
         const controller = new LifecycleController({
@@ -161,9 +238,17 @@ export function useSolaxisExecution() {
         });
 
         controller.onProgress((event: ProgressEvent) => {
+          const now = performance.now();
+          const delta = lastIterTimeRef.current > 0 ? Math.max(1, now - lastIterTimeRef.current) : 10;
+          lastIterTimeRef.current = now;
+          setTickLatencies((prev) => [...prev.slice(-49), Number(delta.toFixed(1))]);
           setCurrentIteration(event.currentIteration);
           setCurrentOutput(event.currentOutput);
-          if (event.currentIteration === 1 || event.currentIteration % 10 === 0 || event.currentIteration === req.iterations) {
+          if (
+            event.currentIteration === 1 ||
+            event.currentIteration % 10 === 0 ||
+            event.currentIteration === defaultIters
+          ) {
             addLog(
               "ER-EXEC",
               `[ER-EXEC] Completed iteration ${event.currentIteration}/${event.totalIterations}: hash ${event.currentOutput.slice(0, 14)}...`
@@ -177,9 +262,9 @@ export function useSolaxisExecution() {
         });
 
         const result = await controller.invoke({
-          iterations: req.iterations,
-          seed: req.seed,
-          targetValidator: req.targetValidator,
+          iterations: defaultIters,
+          seed: 42,
+          targetValidator,
           signal: abortController.signal,
         });
 
@@ -199,36 +284,22 @@ export function useSolaxisExecution() {
 
         return result;
       } catch (err: unknown) {
-        const errorMsg = err instanceof Error ? err.message : String(err);
-        setError(errorMsg);
-        setStatus("FAILED");
-        setIsExecuting(false);
-        addLog("ERROR", `Execution failed: ${errorMsg}`);
-        throw err;
+        if (!abortController.signal.aborted) {
+          const errMsg = err instanceof Error ? err.message : "Execution failed";
+          setError(errMsg);
+          setStatus("FAILED");
+          setIsExecuting(false);
+          addLog("ERROR", `[ERROR] Invocation error: ${errMsg}`);
+        }
       }
     },
-    [
-      connection,
-      wallet,
-      selectedFunction,
-      iterations,
-      seed,
-      targetValidator,
-      addLog,
-    ]
+    [connection, wallet, selectedFunction, addLog]
   );
 
   return {
-    // Configuration
     selectedFunction,
     setSelectedFunction,
-    iterations,
-    setIterations,
-    seed,
-    setSeed,
-    targetValidator,
-    setTargetValidator,
-    // Execution state
+    iterations: totalIterations,
     status,
     activeTaskId,
     currentIteration,
@@ -238,10 +309,10 @@ export function useSolaxisExecution() {
     logs,
     error,
     isExecuting,
-    // Actions
     launch,
     reset,
-    addLog,
+    daemon,
+    tickLatencies,
   };
 }
 

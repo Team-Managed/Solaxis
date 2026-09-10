@@ -90,18 +90,18 @@ export function LifecycleVisualizer() {
       : "idle";
 
   return (
-    <div className="space-y-4 rounded-xl border border-white/10 bg-graphite-900/90 p-5 backdrop-blur-md">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-600 shadow-sm">
             <Layers className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">
+            <h3 className="text-sm font-bold text-slate-900">
               Micro-Instance Execution Lifecycle
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-slate-500">
               Deterministic 4-stage pipeline • Solana L1 ➔ Ephemeral Rollup ➔ Solana L1
             </p>
           </div>
@@ -110,7 +110,7 @@ export function LifecycleVisualizer() {
         <div className="flex items-center gap-3">
           <StatusBadge status={status} />
           {telemetry && (
-            <div className="border-l border-white/10 pl-3">
+            <div className="border-l border-slate-200 pl-3">
               <LatencyCounter durationMs={telemetry.totalDurationMs} size="sm" />
             </div>
           )}

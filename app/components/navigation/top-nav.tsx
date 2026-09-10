@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   Sun,
@@ -10,6 +11,7 @@ import {
   Check,
   Activity,
   Terminal as TerminalIcon,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PulseIndicator } from "@/components/solaxis/pulse-indicator";
@@ -70,50 +72,42 @@ export function TopNav() {
     : "";
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-obsidian-950/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand & Logo */}
+        {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-[0_0_20px_-3px_rgba(245,158,11,0.4)]">
-            <Sun className="h-5 w-5 text-obsidian-950 stroke-[2.5]" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold tracking-tight text-white font-sans">
-                SOLAXIS
-              </span>
-              <span className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-mono font-medium text-amber-400 border border-amber-500/20">
-                v0.1.0
-              </span>
-            </div>
-            <p className="text-[11px] text-muted-foreground hidden sm:block">
-              Serverless Web3 Micro-Instance Engine
-            </p>
-          </div>
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-lg font-black tracking-tight text-slate-900 font-sans hover:text-orange-600 transition-colors">
+              SOLAXIS
+            </span>
+            <span className="text-xs text-slate-500 font-mono">
+              / Console
+            </span>
+          </Link>
         </div>
 
         {/* Network & Infrastructure Status Pills */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2.5">
           {/* L1 Status */}
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-graphite-900/90 px-3 py-1 text-xs">
+          <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs">
             <PulseIndicator
               active={l1Ping !== null}
               color={l1Ping ? "emerald" : "crimson"}
               size="sm"
             />
-            <span className="text-muted-foreground">Solana Devnet</span>
+            <span className="text-slate-600 font-medium">Solana Devnet</span>
             {l1Ping !== null && (
-              <span className="font-mono text-[11px] text-emerald-400">
+              <span className="font-mono text-[11px] font-semibold text-emerald-600">
                 {l1Ping}ms
               </span>
             )}
           </div>
 
           {/* MagicBlock TEE Enclave Status */}
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-graphite-900/90 px-3 py-1 text-xs">
-            <Shield className="h-3.5 w-3.5 text-cyan-400" />
-            <span className="text-muted-foreground">MagicBlock TEE</span>
-            <span className="font-mono text-[11px] text-cyan-400">
+          <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs">
+            <Shield className="h-3.5 w-3.5 text-cyan-600" />
+            <span className="text-slate-600 font-medium">MagicBlock TEE</span>
+            <span className="font-mono text-[11px] font-semibold text-cyan-600">
               {routerPing}ms
             </span>
           </div>
@@ -125,7 +119,7 @@ export function TopNav() {
             href="https://github.com/Team-Managed/Solaxis"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-lg p-2 text-muted-foreground hover:bg-white/5 hover:text-white transition-colors"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors"
             title="GitHub Repository"
           >
             <svg
@@ -143,19 +137,19 @@ export function TopNav() {
 
           {/* Connected Balance & Address pill */}
           {connected && publicKey && (
-            <div className="hidden lg:flex items-center gap-2 rounded-lg border border-white/10 bg-graphite-800/80 px-2.5 py-1 text-xs font-mono">
-              <span className="text-amber-400 font-bold">
+            <div className="hidden lg:flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-mono">
+              <span className="text-amber-700 font-bold">
                 {balance !== null ? `${balance.toFixed(2)} SOL` : "..."}
               </span>
-              <span className="text-white/20">|</span>
+              <span className="text-slate-300">|</span>
               <button
                 onClick={copyAddress}
-                className="flex items-center gap-1 text-muted-foreground hover:text-white transition-colors"
+                className="flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors"
                 title="Copy address"
               >
                 <span>{truncatedAddress}</span>
                 {copied ? (
-                  <Check className="h-3 w-3 text-emerald-400" />
+                  <Check className="h-3 w-3 text-emerald-600" />
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}

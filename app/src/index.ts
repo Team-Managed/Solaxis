@@ -26,8 +26,6 @@ export * from "../components/solaxis/console-state";
 
 // Console Components & Shell
 export * from "../components/navigation/top-nav";
-export * from "../components/console/function-catalog";
-export * from "../components/console/invocation-panel";
 export * from "../components/console/console-layout";
 
 // Lifecycle Visualizer (Unit 08)

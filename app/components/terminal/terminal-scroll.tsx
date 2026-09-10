@@ -83,12 +83,12 @@ export function TerminalScroll({
       {!isAtBottom && (
         <button
           onClick={scrollToBottom}
-          className="absolute bottom-3 right-4 z-20 flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-graphite-900/95 px-3 py-1 text-xs font-mono font-medium text-amber-300 shadow-xl backdrop-blur-md hover:bg-graphite-800 transition-all hover:scale-105"
+          className="absolute bottom-3 right-4 z-20 flex items-center gap-1.5 rounded-md border border-amber-500/40 bg-graphite-900/95 px-3 py-1 text-xs font-mono font-medium text-amber-300 shadow-xl backdrop-blur-md hover:bg-graphite-800 transition-all hover:scale-105"
         >
           <ArrowDown className="h-3 w-3" />
           <span>Scroll to bottom</span>
           {unreadCount > 0 && (
-            <span className="rounded-full bg-amber-500 px-1.5 py-0 text-[10px] font-bold text-obsidian-950">
+            <span className="rounded bg-amber-500 px-1.5 py-0 text-[10px] font-bold text-obsidian-950">
               +{unreadCount}
             </span>
           )}

@@ -37,7 +37,8 @@ export function ComparisonGrid({ telemetry, iterations }: ComparisonGridProps) {
 
   // Gas calculation: 5,000 lamports per standard L1 signature
   const l1EstimatedGasLamports = iterations * 5000;
-  const gasSavedPercent = telemetry.l1GasSavedPercent || 99.4;
+  const gasSavedPercent =
+    telemetry.l1GasSavedPercent !== undefined ? telemetry.l1GasSavedPercent : 0;
 
   return (
     <div className="space-y-4">

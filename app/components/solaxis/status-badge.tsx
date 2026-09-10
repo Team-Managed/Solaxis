@@ -19,11 +19,11 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-medium text-zinc-400 font-mono",
+            "inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 font-mono",
             className
           )}
         >
-          {showIcon && <Circle className="h-2 w-2 fill-zinc-500 text-zinc-500" />}
+          {showIcon && <Circle className="h-2 w-2 fill-slate-400 text-slate-400" />}
           IDLE
         </span>
       );
@@ -32,11 +32,11 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-300 font-mono shadow-[0_0_12px_-2px_rgba(245,158,11,0.25)]",
+            "inline-flex items-center gap-1.5 rounded-md border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-800 font-mono",
             className
           )}
         >
-          {showIcon && <Loader2 className="h-3 w-3 animate-spin text-amber-400" />}
+          {showIcon && <Loader2 className="h-3 w-3 animate-spin text-amber-600" />}
           PROVISIONING
         </span>
       );
@@ -45,7 +45,7 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-300 font-mono shadow-[0_0_15px_-2px_rgba(16,185,129,0.3)] animate-pulse",
+            "inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-800 font-mono",
             className
           )}
         >
@@ -63,11 +63,11 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-0.5 text-xs font-medium text-cyan-300 font-mono shadow-[0_0_12px_-2px_rgba(6,182,212,0.25)]",
+            "inline-flex items-center gap-1.5 rounded-md border border-cyan-300 bg-cyan-50 px-2 py-0.5 text-xs font-bold text-cyan-800 font-mono",
             className
           )}
         >
-          {showIcon && <Loader2 className="h-3 w-3 animate-spin text-cyan-400" />}
+          {showIcon && <Loader2 className="h-3 w-3 animate-spin text-cyan-600" />}
           TEARING DOWN
         </span>
       );
@@ -76,11 +76,11 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-200 font-mono shadow-[0_0_12px_-2px_rgba(16,185,129,0.3)]",
+            "inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-800 font-mono",
             className
           )}
         >
-          {showIcon && <ShieldCheck className="h-3 w-3 text-emerald-400" />}
+          {showIcon && <ShieldCheck className="h-3 w-3 text-emerald-600" />}
           SETTLED (L1)
         </span>
       );
@@ -89,11 +89,11 @@ export function StatusBadge({
       return (
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-500/10 px-2.5 py-0.5 text-xs font-medium text-red-400 font-mono shadow-[0_0_12px_-2px_rgba(239,68,68,0.25)]",
+            "inline-flex items-center gap-1.5 rounded-md border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-800 font-mono",
             className
           )}
         >
-          {showIcon && <AlertTriangle className="h-3 w-3 text-red-400" />}
+          {showIcon && <AlertTriangle className="h-3 w-3 text-red-600" />}
           FAILED
         </span>
       );
