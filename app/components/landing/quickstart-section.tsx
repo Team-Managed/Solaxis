@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 
 type QuickstartTab = "cli" | "sdk";
+type OsPlatform = "mac-linux" | "windows" | "npm";
 
 export function QuickstartSection() {
   const [activeTab, setActiveTab] = useState<QuickstartTab>("cli");
+  const [osPlatform, setOsPlatform] = useState<OsPlatform>("mac-linux");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = (text: string, key: string) => {
@@ -23,23 +25,68 @@ export function QuickstartSection() {
     setTimeout(() => setCopiedKey(null), 1800);
   };
 
-  const cliSnippet = `# 1. Install Solaxis CLI globally (or run with npx without installing)
-npm install -g @solaxis/cli
+  const macLinuxSnippet = `# 1. Install Solaxis CLI (or run ./install.sh inside cloned repo)
+curl -fsSL https://solaxis.run/install.sh | bash
 
-# 2. Run instant micro-instance compute on Devnet & Intel TDX TEE
-npx solaxis invoke batch-risk-simulator -i 50 --tee
+# 2. Scaffold your custom compute kernel
+solaxis new my-custom-engine
 
-# 3. Scaffold a new custom function project
-solaxis new my-risk-engine
+# 3. Run micro-instance compute on Devnet & Intel TDX TEE
+solaxis invoke my-custom-engine -i 50 --tee
 
 # 4. Diagnose live Ephemeral Micro-VM tick rates & memory state
 solaxis vm`;
 
+  const windowsSnippet = `# 1. Install Solaxis CLI in Windows PowerShell (or run .\\install.ps1 in repo)
+irm https://solaxis.run/install.ps1 | iex
+
+# 2. Scaffold your custom compute kernel
+solaxis new my-custom-engine
+
+# 3. Run micro-instance compute on Devnet & Intel TDX TEE
+solaxis invoke my-custom-engine -i 50 --tee
+
+# 4. Diagnose live Ephemeral Micro-VM tick rates & memory state
+solaxis vm`;
+
+  const npmSnippet = `# 1. Install Solaxis CLI globally (or run with npx without installing)
+npm install -g @solaxis/cli
+
+# 2. Scaffold your custom compute kernel
+solaxis new my-custom-engine
+
+# 3. Run micro-instance compute on Devnet & Intel TDX TEE
+solaxis invoke my-custom-engine -i 50 --tee
+
+# 4. Diagnose live Ephemeral Micro-VM tick rates & memory state
+solaxis vm`;
+
+  const currentCliSnippet =
+    osPlatform === "mac-linux"
+      ? macLinuxSnippet
+      : osPlatform === "windows"
+      ? windowsSnippet
+      : npmSnippet;
+
+  const currentCliQuickCmd =
+    osPlatform === "mac-linux"
+      ? "curl -fsSL https://solaxis.run/install.sh | bash"
+      : osPlatform === "windows"
+      ? "irm https://solaxis.run/install.ps1 | iex"
+      : "npm install -g @solaxis/cli";
+
+  const currentCliQuickLabel =
+    osPlatform === "mac-linux"
+      ? "curl -fsSL ... | bash"
+      : osPlatform === "windows"
+      ? "irm ... | iex"
+      : "npm i -g @solaxis/cli";
+
   const sdkSnippet = `import { SolaxisClient, defineFunction } from "@solaxis/sdk";
 
-// 1. Define a serverless micro-instance function
-export const riskSimulator = defineFunction({
-  name: "batch-risk-simulator",
+// 1. Define your custom serverless micro-instance function
+export const myEngine = defineFunction({
+  name: "my-custom-engine",
   defaultIterations: 50,
   targetValidator: "confidential-tee", // Route to Intel TDX TEE enclave
 });
@@ -52,7 +99,7 @@ client.on("progress", (event) => {
 });
 
 // 3. Execute end-to-end: L1 delegation -> ER loop -> Atomic L1 settlement
-const metrics = await client.invoke(riskSimulator, { iterations: 50 });
+const metrics = await client.invoke(myEngine, { iterations: 50 });
 console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1GasSavedPercent}%)\`);`;
 
   return (
@@ -106,11 +153,11 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
             {/* Quick Instant Run Command Bar */}
             <div className="hidden sm:flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-mono text-slate-800 shadow-2xs">
               <span className="text-slate-400 select-none">$</span>
-              <span className="font-semibold text-sky-700">npx solaxis invoke</span>
-              <span className="text-slate-500">batch-risk-simulator</span>
+              <span className="font-semibold text-sky-700">solaxis invoke</span>
+              <span className="text-slate-500">my-custom-engine</span>
               <button
                 type="button"
-                onClick={() => handleCopy("npx solaxis invoke batch-risk-simulator -i 50 --tee", "top-cmd")}
+                onClick={() => handleCopy("solaxis invoke my-custom-engine -i 50 --tee", "top-cmd")}
                 className="ml-2 p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800 transition-colors"
                 title="Copy Command"
               >
@@ -126,7 +173,7 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
           {/* TAB 1: TERMINAL CLI */}
           {activeTab === "cli" && (
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">
                     Run via Standalone CLI (<code className="font-mono text-sky-700">solaxis</code>)
@@ -139,17 +186,61 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
-                    onClick={() => handleCopy("npm install -g @solaxis/cli", "cli-npm")}
+                    onClick={() => handleCopy(currentCliQuickCmd, "cli-quick-cmd")}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-xs font-mono font-medium text-slate-800 transition-colors shadow-2xs"
+                    title={`Copy: ${currentCliQuickCmd}`}
                   >
-                    {copiedKey === "cli-npm" ? (
+                    {copiedKey === "cli-quick-cmd" ? (
                       <Check className="h-3.5 w-3.5 text-emerald-600" />
                     ) : (
                       <Copy className="h-3.5 w-3.5 text-slate-400" />
                     )}
-                    <span>npm i -g @solaxis/cli</span>
+                    <span>{currentCliQuickLabel}</span>
                   </button>
                 </div>
+              </div>
+
+              {/* OS Platform Switcher Tabs */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold font-mono text-slate-500 uppercase tracking-wider mr-1">
+                  Platform:
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setOsPlatform("mac-linux")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-all ${
+                    osPlatform === "mac-linux"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  macOS &amp; Linux (curl)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOsPlatform("windows")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-all ${
+                    osPlatform === "windows"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  Windows (PowerShell)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOsPlatform("npm")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-mono font-semibold transition-all ${
+                    osPlatform === "npm"
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200"
+                  }`}
+                >
+                  NPM / Global
+                </button>
               </div>
 
               {/* Monospace Code Terminal Window */}
@@ -159,12 +250,18 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
                     <span className="h-2.5 w-2.5 rounded-full bg-red-500/80 inline-block" />
                     <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80 inline-block" />
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80 inline-block" />
-                    <span className="text-[11px] text-slate-400 ml-2">bash • terminal</span>
+                    <span className="text-[11px] text-slate-400 ml-2">
+                      {osPlatform === "mac-linux"
+                        ? "bash • macOS & Linux"
+                        : osPlatform === "windows"
+                        ? "powershell • Windows"
+                        : "bash • Node / NPM"}
+                    </span>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => handleCopy(cliSnippet, "cli-snippet")}
+                    onClick={() => handleCopy(currentCliSnippet, "cli-snippet")}
                     className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors"
                   >
                     {copiedKey === "cli-snippet" ? (
@@ -182,9 +279,14 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
                 </div>
 
                 <div className="p-4 sm:p-6 overflow-x-auto whitespace-pre leading-relaxed text-slate-200 text-[11px] sm:text-xs">
-                  {cliSnippet.split("\n").map((line, i) => {
+                  {currentCliSnippet.split("\n").map((line: string, i: number) => {
                     const isComment = line.startsWith("#");
-                    const isCommand = line.startsWith("npm") || line.startsWith("npx") || line.startsWith("solaxis");
+                    const isCommand =
+                      line.startsWith("npm") ||
+                      line.startsWith("npx") ||
+                      line.startsWith("solaxis") ||
+                      line.startsWith("curl") ||
+                      line.startsWith("irm");
 
                     return (
                       <div key={i} className="flex items-start gap-3">
@@ -213,30 +315,30 @@ console.log(\`Settled in \${metrics.totalDurationMs}ms (Gas Saved: \${metrics.l1
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs">
                   <div className="font-bold text-slate-900 flex items-center gap-1.5">
                     <Zap className="h-3.5 w-3.5 text-sky-600" />
-                    <span>Instant Execution</span>
+                    <span>Cross-Platform Install</span>
                   </div>
                   <div className="text-slate-600 mt-1 text-[11px] leading-normal">
-                    Run directly via <code className="text-slate-800 font-mono font-semibold">npx solaxis invoke</code> without prior installation.
+                    One-line setup via <code className="text-slate-800 font-mono font-semibold">curl</code>, Windows <code className="text-slate-800 font-mono font-semibold">irm</code>, or repo <code className="text-slate-800 font-mono font-semibold">./install.sh</code>.
                   </div>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs">
                   <div className="font-bold text-slate-900 flex items-center gap-1.5">
                     <Shield className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>Devnet Keypairs</span>
+                    <span>Automatic PATH Setup</span>
                   </div>
                   <div className="text-slate-600 mt-1 text-[11px] leading-normal">
-                    Uses your existing <code className="text-slate-800 font-mono font-semibold">~/.config/solana/id.json</code> or creates an ephemeral test signer.
+                    Configures <code className="text-slate-800 font-mono font-semibold">~/.solaxis/bin</code> into zsh, bash, and Windows Environment PATH with executable shims.
                   </div>
                 </div>
 
                 <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs">
                   <div className="font-bold text-slate-900 flex items-center gap-1.5">
                     <Cpu className="h-3.5 w-3.5 text-indigo-600" />
-                    <span>Simulation Mode</span>
+                    <span>Devnet &amp; TEE Native</span>
                   </div>
                   <div className="text-slate-600 mt-1 text-[11px] leading-normal">
-                    Pass <code className="text-slate-800 font-mono font-semibold">--simulate</code> to test telemetry pipelines offline in 800ms.
+                    Auto-detects Devnet signer keypairs and routes workloads to Intel TDX hardware enclaves.
                   </div>
                 </div>
               </div>

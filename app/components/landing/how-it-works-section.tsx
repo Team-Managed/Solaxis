@@ -135,7 +135,7 @@ export function HowItWorksSection() {
       icon: <Cpu className="h-5 w-5 text-emerald-600" />,
       description:
         "High-frequency compute iterations execute in-memory inside the Intel TDX TEE enclave at sub-10ms tick latency with 0 Lamports consumed in base-layer gas fees, streaming real-time iteration telemetry to the client.",
-      cliCommand: "solaxis invoke batch-risk-simulator -i 50 --tee",
+      cliCommand: "solaxis invoke my-custom-engine -i 50 --tee",
       timing: "8.4ms / tick • 342ms total",
       invariants: [
         "In-memory SVM state transition loop (< 10ms per tick)",
@@ -143,9 +143,9 @@ export function HowItWorksSection() {
         "Hardware-isolated TEE memory cryptographically shielded from host",
       ],
       outputLines: [
-        "$ solaxis invoke batch-risk-simulator -i 50 --tee",
+        "$ solaxis invoke my-custom-engine -i 50 --tee",
         "",
-        "⚡ Solaxis Micro-Instance Engine: Invoking \"batch-risk-simulator\" on confidential-tee",
+        "⚡ Solaxis Micro-Instance Engine: Invoking \"my-custom-engine\" on confidential-tee",
         "Authority: CniPSdkAUaNTfZZUSKvAKU2VJuWecRjqvGhDmQjGSZEG | Task ID: task-7f9a2e",
         "",
         "✔ [1/5] Account delegated to MagicBlock Delegation Program",
@@ -186,7 +186,7 @@ export function HowItWorksSection() {
         "┌─────────────────────────────┬────────────────────────────────────────────────────────┐",
         "│ ⚡ Solaxis Telemetry Metric  │ Execution Value                                        │",
         "├─────────────────────────────┼────────────────────────────────────────────────────────┤",
-        "│ Function Name               │ batch-risk-simulator                                   │",
+        "│ Function Name               │ my-custom-engine                                       │",
         "├─────────────────────────────┼────────────────────────────────────────────────────────┤",
         "│ Task ID                     │ task-7f9a2e                                            │",
         "├─────────────────────────────┼────────────────────────────────────────────────────────┤",
@@ -302,7 +302,7 @@ export function HowItWorksSection() {
       return (
         <div key={idx} className="font-bold pt-1 pb-0.5 font-mono select-text">
           <span className="text-amber-400">⚡ Solaxis Micro-Instance Engine: </span>
-          <span className="text-white">Invoking &quot;batch-risk-simulator&quot; on confidential-tee</span>
+          <span className="text-white">Invoking &quot;my-custom-engine&quot; on confidential-tee</span>
         </div>
       );
     }
