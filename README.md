@@ -63,7 +63,8 @@ flowchart LR
 ├── contracts/    # Solana Anchor smart contract & solaxis-engine-sdk Rust crate
 ├── shared/       # Protocol schemas, types, constants, PDA helpers & validators
 ├── cli/          # Developer CLI (solaxis new / init / status / invoke / deploy)
-└── app/          # Next.js 15 Web3 Developer Console (Visualizer & CloudWatch stream)
+├── app/          # Next.js 15 Web3 Developer Console (Visualizer & CloudWatch stream)
+└── docs/         # Documentation & Demo Video Storyboard (DEMO_VIDEO_SCRIPT.md)
 ```
 
 ---
