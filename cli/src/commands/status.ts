@@ -147,7 +147,14 @@ export function registerStatusCommand(program: Command): void {
           [chalk.white("Explorer Link"), chalk.underline.blue(`https://explorer.solana.com/address/${taskPda.toBase58()}?cluster=devnet`)]
         );
 
-        console.log(`\n${card.toString()}\n`);
+        const consoleNotice =
+          chalk.bold.hex("#38BDF8")("🔍 Live Web Developer Console:") +
+          " " +
+          chalk.underline.cyan("https://solaxis.run/console") +
+          chalk.gray(" (or http://localhost:3000/console)\n") +
+          chalk.gray("   • Audit on-chain state transitions & cryptographic settlement proofs");
+
+        console.log(`\n${card.toString()}\n\n${consoleNotice}\n`);
         process.exit(0);
       } catch (err) {
         spinner.fail(chalk.red(`Error querying status: ${(err as Error).message}`));

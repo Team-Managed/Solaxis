@@ -91,5 +91,12 @@ export function renderTelemetryView(
     chalk.bold.white("                      SOLAXIS MICRO-INSTANCE SETTLEMENT SUMMARY\n") +
     chalk.bold.hex("#F59E0B")("══════════════════════════════════════════════════════════════════════════════════════");
 
-  return `${headerBanner}\n${table.toString()}\n`;
+  const consoleNotice =
+    chalk.bold.hex("#38BDF8")("🔍 Live Web Developer Console:") +
+    " " +
+    chalk.underline.cyan("https://solaxis.run/console") +
+    chalk.gray(" (or http://localhost:3000/console)\n") +
+    chalk.gray("   • Stream real-time CloudWatch JSON-RPC telemetry, TEE enclave health & Explorer proofs");
+
+  return `${headerBanner}\n${table.toString()}\n\n${consoleNotice}\n`;
 }

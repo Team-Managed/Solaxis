@@ -120,7 +120,14 @@ export function registerVmCommand(program: Command): void {
           ]);
         }
 
-        console.log(`\n${card.toString()}\n`);
+        const consoleNotice =
+          chalk.bold.hex("#38BDF8")("🔍 Live Web Developer Console:") +
+          " " +
+          chalk.underline.cyan("https://solaxis.run/console") +
+          chalk.gray(" (or http://localhost:3000/console)\n") +
+          chalk.gray("   • View live Hexagonal Cluster Map & real-time slot latency dots");
+
+        console.log(`\n${card.toString()}\n\n${consoleNotice}\n`);
         process.exit(0);
       } catch (err) {
         spinner.fail(chalk.red(`Failed to query Micro-VM: ${(err as Error).message}`));
