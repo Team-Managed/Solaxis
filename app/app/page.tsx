@@ -1,20 +1,25 @@
-import { TopNav } from "@/components/navigation/top-nav";
-import { ConsoleLayout } from "@/components/console/console-layout";
+import { LandingNav } from "@/components/landing/landing-nav";
+import { HeroSection } from "@/components/landing/hero-section";
+import { HowItWorksSection } from "@/components/landing/how-it-works-section";
+import { QuickstartSection } from "@/components/landing/quickstart-section";
+import { ComparisonSection } from "@/components/landing/comparison-section";
+import { FaqSection } from "@/components/landing/faq-section";
+import { LandingFooter } from "@/components/landing/landing-footer";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col">
-      <TopNav />
+    <main className="min-h-screen flex flex-col text-slate-900">
+      <LandingNav />
       <div className="flex-1">
-        <ConsoleLayout />
+        <HeroSection />
+        <HowItWorksSection />
+        <QuickstartSection />
+        <ComparisonSection />
+        <FaqSection />
       </div>
-      {/* Footer */}
-      <footer className="mt-auto border-t border-white/10 bg-obsidian-950/80 py-4 text-center text-xs text-muted-foreground">
-        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Solaxis Web3 Micro-Instance Engine • Powered by MagicBlock Ephemeral Rollups</span>
-          <span className="font-mono text-[11px] text-zinc-500">Solana Devnet Enclave • TDX TEE Verified</span>
-        </div>
-      </footer>
+      <LandingFooter />
     </main>
   );
 }
+
+
