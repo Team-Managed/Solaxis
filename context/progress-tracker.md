@@ -11,20 +11,24 @@ Update this file whenever the current phase, active unit, or implementation stat
 ## Current Goal
 
 Design aesthetics, developer quickstart, and observability layout have been elevated to match developer-grade standards:
-- **Developer Quickstart Module (`QuickstartSection`)**: Added interactive developer get-started section with 2 dedicated interface tabs:
-  1. **Terminal CLI (`@solaxis/cli`)**: Global install (`npm i -g @solaxis/cli`), instant run via `npx solaxis invoke`, and scaffolding commands.
+- **Developer Quickstart Module (`QuickstartSection`)**: Added interactive developer get-started section with dedicated interface tabs:
+  1. **Terminal CLI (`@solaxis/cli`)**: Multi-platform installer tabs:
+     - **macOS & Linux**: `curl -fsSL https://solaxis.run/install.sh | bash` (or local `./install.sh`).
+     - **Windows PowerShell**: `irm https://solaxis.run/install.ps1 | iex` (or local `.\install.ps1`).
+     - **NPM / Global**: `npm i -g @solaxis/cli` and `npx solaxis invoke`.
   2. **TypeScript SDK (`@solaxis/sdk`)**: Direct package install (`npm i @solaxis/sdk @solana/web3.js`) and syntax-highlighted `defineFunction` + `SolaxisClient` programmatic snippet.
-- **Streamlined Landing Architecture**: Removed redundant Capabilities section and web console tabs from the landing page, focusing navigation directly on `How It Works`, `Quickstart`, `Benchmarks`, and `FAQs`.
-- **1-to-1 CLI Terminal Uniformity (`HowItWorksSection`)**:
-  - Replaced generic editor line numbering with authentic terminal prompt styling (`➜ ~ $`).
-  - Terminal outputs now match `@solaxis/cli` 1-to-1 across all 4 stages:
-    - Stage 01: `solaxis init task-7f9a2e` with genuine PDA derivation and explorer link.
-    - Stage 02: `solaxis vm task-7f9a2e` rendering the exact `cli-table3` operational status, Intel TDX TEE badge, and slot heights.
-    - Stage 03: `solaxis invoke batch-risk-simulator -i 50 --tee` with 5-stage engine lifecycle steps.
-    - Stage 04: `solaxis status task-7f9a2e` rendering the full Micro-Instance Settlement Summary table.
-- **Zero Pill Shapes**: Removed all pill/capsule badges across the page, replacing with clean typography and rectangular micro-tags.
-- **Light Twilight Sky Background**: Maintained soft `#f0f4fa` container for comparison and quickstart cards (no dark mode).
-- All TypeScript types pass validation with 0 errors, Next.js dev server running on `http://localhost:3000`.
+- **Cross-Platform Installation Scripts**:
+  - Authored root `install.sh` and `install.ps1`, mirrored to `app/public/` for static delivery via web servers and GitHub raw links.
+  - Automatic Node.js version detection (>= 18/20), build automation, executable wrapper generation, and shell PATH (`.zshrc`, `.bashrc`, Windows User Environment) registration.
+  - Added `pnpm setup-cli` and `pnpm link-cli` scripts to root `package.json`.
+- **CLI-First Execution Model (Presets Removed)**:
+  - Removed generic preset functions catalog (`batch-risk-simulator`, `confidential-state-hasher`, `session-counter`) and the `workloads` catalog tab from the Web Console.
+  - Positioned the **Solaxis CLI** and **TypeScript SDK** as the primary surfaces where developers author, scaffold (`solaxis new`), and execute (`solaxis invoke <function>`) their own custom functions.
+  - Web Console streamlined into 3 core observability & verification panes:
+    1. **Cluster Overview**: Live Intel TDX TEE status, devnet wallet reserve, Hex Cluster Topology, and Throughput Dot Matrix.
+    2. **CloudWatch Terminal**: Real-time 4-stage lifecycle visualizer and monospace JSON-RPC streaming logs.
+    3. **Explorer Proofs**: Verifiable on-chain settlement signatures and Solana Explorer audit links.
+- All TypeScript types pass validation with 0 errors across all monorepo packages, all 70+ unit tests passing.
 
 ---
 

@@ -20,7 +20,6 @@ import { cn } from "@/lib/utils";
 
 export type ConsoleTab =
   | "overview"
-  | "workloads"
   | "terminal"
   | "proofs";
 
@@ -47,14 +46,6 @@ export function ConsoleSidebar({
       icon: LayoutGrid,
       badge: null,
       description: "Telemetry & Topology",
-    },
-    {
-      id: "workloads" as ConsoleTab,
-      label: "Function Catalog",
-      icon: Layers,
-      badge: "3 Presets",
-      badgeVariant: "default",
-      description: "Anchor 0.30+ Workloads",
     },
     {
       id: "terminal" as ConsoleTab,

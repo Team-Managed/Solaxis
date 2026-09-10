@@ -32,7 +32,6 @@ import { useExecution } from "@/components/providers/execution-provider";
 import { ConsoleSidebar, ConsoleTab } from "@/components/console/console-sidebar";
 import { HexClusterMap } from "@/components/console/hex-cluster-map";
 import { ThroughputDotChart } from "@/components/console/throughput-dot-chart";
-import { WorkloadsTable } from "@/components/console/workloads-table";
 import { CloudwatchTerminal } from "@/components/terminal/cloudwatch-terminal";
 import { BenchmarkCard } from "@/components/benchmark/benchmark-card";
 import { StatusBadge } from "@/components/solaxis/status-badge";
@@ -61,34 +60,8 @@ export function ConsoleLayout() {
     tickLatencies,
   } = useExecution();
 
-  // Navigation tab in sidebar: overview | workloads | terminal | proofs
+  // Navigation tab in sidebar: overview | terminal | proofs
   const [activeTab, setActiveTab] = useState<ConsoleTab>("overview");
-
-  // Category filter in Workloads Catalog
-  const [catalogFilter, setCatalogFilter] = useState<"all" | "confidential-tee" | "state-engine">("all");
-
-  // Fetch real balance if wallet is connected
-  useEffect(() => {
-    let isMounted = true;
-    if (connected && publicKey && connection) {
-      connection.getBalance(publicKey).then((bal) => {
-        if (isMounted) setWalletBalance(bal / LAMPORTS_PER_SOL);
-      }).catch(() => {
-        if (isMounted) setWalletBalance(null);
-      });
-    } else {
-      setWalletBalance(null);
-    }
-    return () => { isMounted = false; };
-  }, [connected, publicKey, connection]);
-
-  const handleLaunchWorkload = (fn: FunctionName, defaultIters: number) => {
-    setSelectedFunction(fn);
-    setActiveTab("terminal");
-    setTimeout(() => {
-      launch(fn, defaultIters);
-    }, 100);
-  };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen w-full">
@@ -134,11 +107,11 @@ export function ConsoleLayout() {
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   type="button"
-                  onClick={() => setActiveTab("workloads")}
+                  onClick={() => setActiveTab("proofs")}
                   className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-colors"
                 >
-                  <Layers className="h-3.5 w-3.5 text-slate-500" />
-                  <span>Function Catalog</span>
+                  <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
+                  <span>Explorer Proofs</span>
                 </button>
 
                 <button
@@ -338,113 +311,6 @@ export function ConsoleLayout() {
                   executedTicks={telemetry?.iterationsCompleted ?? daemon.ticksCompleted}
                   tickLatencies={tickLatencies}
                 />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            PANE 2: FUNCTION CATALOG (Anchor 0.30+ Workloads & Copyable CLI Commands)
-            ========================================================================= */}
-        {activeTab === "workloads" && (
-          <div className="space-y-5 max-w-6xl animate-in fade-in duration-150">
-            {/* Top Title & Filter Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white border border-slate-200 text-slate-800 shadow-xs">
-                  <Layers className="h-4 w-4" />
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold tracking-tight text-slate-900">
-                    Function Catalog
-                  </h1>
-                  <p className="text-xs text-slate-500">
-                    Anchor 0.30+ Smart Contract Workloads for Ephemeral Rollups & Intel TDX TEE
-                  </p>
-                </div>
-              </div>
-
-              {/* Category Filter */}
-              <div className="flex items-center rounded-md border border-slate-200 bg-white p-0.5 text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setCatalogFilter("all")}
-                  className={cn(
-                    "px-3 py-1 rounded transition-all",
-                    catalogFilter === "all"
-                      ? "bg-slate-900 text-white shadow-xs font-bold"
-                      : "text-slate-600 hover:text-slate-900"
-                  )}
-                >
-                  All (3)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCatalogFilter("confidential-tee")}
-                  className={cn(
-                    "px-3 py-1 rounded transition-all",
-                    catalogFilter === "confidential-tee"
-                      ? "bg-slate-900 text-white shadow-xs font-bold"
-                      : "text-slate-600 hover:text-slate-900"
-                  )}
-                >
-                  Intel TDX TEE
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCatalogFilter("state-engine")}
-                  className={cn(
-                    "px-3 py-1 rounded transition-all",
-                    catalogFilter === "state-engine"
-                      ? "bg-slate-900 text-white shadow-xs font-bold"
-                      : "text-slate-600 hover:text-slate-900"
-                  )}
-                >
-                  Standard ER
-                </button>
-              </div>
-            </div>
-
-            {/* Presets Table with Copyable CLI Commands */}
-            <WorkloadsTable
-              onLaunchWorkload={handleLaunchWorkload}
-              isExecuting={isExecuting}
-              filterCategory={catalogFilter}
-              lastExecutedFunction={selectedFunction}
-              lastExecutionDurationMs={telemetry?.totalDurationMs}
-              status={status}
-            />
-
-            {/* Contract Source & Architecture Details Card */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs space-y-3 text-xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div className="flex items-center gap-2 font-bold text-slate-800">
-                  <Code2 className="h-4 w-4 text-slate-600" />
-                  <span>On-Chain Program & Rollup Invariants</span>
-                </div>
-                <span className="font-mono text-[11px] text-slate-500">
-                  contracts/programs/solaxis_engine
-                </span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-slate-600">
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-800 block">Anchor 0.30+ Engine</span>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Uses the <code className="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700">#[ephemeral]</code> macro to inject undelegation callbacks CPI'd by the Delegation Program.
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-800 block">Hardware-Isolated TEE</span>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Confidential hasher runs inside Intel TDX with remote attestation, cryptographically shielding RAM from host operators.
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <span className="font-bold text-slate-800 block">Atomic Intent Settlement</span>
-                  <p className="text-[11px] text-slate-500 leading-relaxed">
-                    Uses <code className="font-mono bg-slate-100 px-1 py-0.5 rounded text-slate-700">MagicIntentBundleBuilder.commit_and_undelegate</code> to atomically revert account ownership to L1.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
