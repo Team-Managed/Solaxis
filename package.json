@@ -10,6 +10,8 @@
     "lint": "pnpm --filter \"@solaxis/*\" run lint",
     "cli": "node ./cli/dist/bin/solaxis.js",
     "solaxis": "node ./cli/dist/bin/solaxis.js",
+    "setup-cli": "./install.sh",
+    "link-cli": "pnpm build && cd cli && npm link",
     "app": "pnpm --filter @solaxis/app",
     "shared": "pnpm --filter @solaxis/shared",
     "sdk": "pnpm --filter @solaxis/sdk"
