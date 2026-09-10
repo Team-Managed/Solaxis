@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import "@solana/wallet-adapter-react-ui/styles.css";
 import "./globals.css";
 import { SolanaWalletProvider } from "@/components/providers/wallet-provider";
 import { ExecutionProvider } from "@/components/providers/execution-provider";
@@ -28,9 +29,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-obsidian-950 text-foreground min-h-screen antialiased selection:bg-amber-500/20 selection:text-amber-300 ambient-solar-bg`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans sunset-mesh-bg contour-lines-overlay min-h-screen text-slate-900 antialiased selection:bg-rose-500/25 selection:text-rose-950`}
       >
         <SolanaWalletProvider>
           <ExecutionProvider>{children}</ExecutionProvider>
