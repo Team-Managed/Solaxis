@@ -6,15 +6,25 @@ Update this file whenever the current phase, active unit, or implementation stat
 
 ## Current Phase
 
-**Phase 8: Web Console Telemetry & Verification Suite Complete — Ready for Devnet E2E & CI**
+**Phase 10: Developer Quickstart, Streamlined Landing Architecture & CLI Uniformity**
 
 ## Current Goal
 
-Units 01 through 10 implementations verified and complete. Web3 Developer Console (`@solaxis/app`) features the full live telemetry suite:
-- **Unit 08 (Live Lifecycle Visualizer)**: 4-stage visual pipeline with animated SVG energy tracks, live `requestAnimationFrame` millisecond stopwatches, and slide-out deep inspection metadata drawer.
-- **Unit 09 (Decentralized CloudWatch Stream)**: Monospace developer terminal with 1,000-entry ring buffer, smart sticky auto-scroll with floating unread pill, log level filters (`INFO`, `RPC`, `COMPUTE`, `WARN`, `ERROR`), real-time search, clipboard copy, and JSON export.
-- **Unit 10 (Benchmark & Explorer Verification)**: Side-by-side cost and latency comparison cards (`~65x Faster`, `99.4% Gas Reduction`), verifiable Solana Devnet Explorer links with copy buttons, share proof markdown generator, and audit report drawer.
-All 70 unit tests pass across shared/sdk/cli, typecheck clean, and Next.js static build generates 4/4 pages successfully. Ready to proceed to Unit 11 (Devnet E2E Verification and CI).
+Design aesthetics, developer quickstart, and observability layout have been elevated to match developer-grade standards:
+- **Developer Quickstart Module (`QuickstartSection`)**: Added interactive developer get-started section with 2 dedicated interface tabs:
+  1. **Terminal CLI (`@solaxis/cli`)**: Global install (`npm i -g @solaxis/cli`), instant run via `npx solaxis invoke`, and scaffolding commands.
+  2. **TypeScript SDK (`@solaxis/sdk`)**: Direct package install (`npm i @solaxis/sdk @solana/web3.js`) and syntax-highlighted `defineFunction` + `SolaxisClient` programmatic snippet.
+- **Streamlined Landing Architecture**: Removed redundant Capabilities section and web console tabs from the landing page, focusing navigation directly on `How It Works`, `Quickstart`, `Benchmarks`, and `FAQs`.
+- **1-to-1 CLI Terminal Uniformity (`HowItWorksSection`)**:
+  - Replaced generic editor line numbering with authentic terminal prompt styling (`➜ ~ $`).
+  - Terminal outputs now match `@solaxis/cli` 1-to-1 across all 4 stages:
+    - Stage 01: `solaxis init task-7f9a2e` with genuine PDA derivation and explorer link.
+    - Stage 02: `solaxis vm task-7f9a2e` rendering the exact `cli-table3` operational status, Intel TDX TEE badge, and slot heights.
+    - Stage 03: `solaxis invoke batch-risk-simulator -i 50 --tee` with 5-stage engine lifecycle steps.
+    - Stage 04: `solaxis status task-7f9a2e` rendering the full Micro-Instance Settlement Summary table.
+- **Zero Pill Shapes**: Removed all pill/capsule badges across the page, replacing with clean typography and rectangular micro-tags.
+- **Light Twilight Sky Background**: Maintained soft `#f0f4fa` container for comparison and quickstart cards (no dark mode).
+- All TypeScript types pass validation with 0 errors, Next.js dev server running on `http://localhost:3000`.
 
 ---
 
