@@ -14,7 +14,7 @@ Units 01 through 10 implementations verified and complete. Web3 Developer Consol
 - **Unit 08 (Live Lifecycle Visualizer)**: 4-stage visual pipeline with animated SVG energy tracks, live `requestAnimationFrame` millisecond stopwatches, and slide-out deep inspection metadata drawer.
 - **Unit 09 (Decentralized CloudWatch Stream)**: Monospace developer terminal with 1,000-entry ring buffer, smart sticky auto-scroll with floating unread pill, log level filters (`INFO`, `RPC`, `COMPUTE`, `WARN`, `ERROR`), real-time search, clipboard copy, and JSON export.
 - **Unit 10 (Benchmark & Explorer Verification)**: Side-by-side cost and latency comparison cards (`~65x Faster`, `99.4% Gas Reduction`), verifiable Solana Devnet Explorer links with copy buttons, share proof markdown generator, and audit report drawer.
-All 67 unit tests pass across shared/sdk/cli, typecheck clean, and Next.js static build generates 4/4 pages successfully. Ready to proceed to Unit 11 (Devnet E2E Verification and CI).
+All 70 unit tests pass across shared/sdk/cli, typecheck clean, and Next.js static build generates 4/4 pages successfully. Ready to proceed to Unit 11 (Devnet E2E Verification and CI).
 
 ---
 
@@ -37,7 +37,7 @@ All specs have been authored to match the Flank benchmark format: zero raw code 
 
 | Unit | Spec | Status | Notes |
 |---|---|---|---|
-| **06** | Solaxis CLI Runner | ✅ Complete | Commander.js CLI, `new`, `deploy`, `init`, `status`, `invoke`, animated Ora spinners, cli-table3 telemetry, 9 tests passing |
+| **06** | Solaxis CLI Runner | ✅ Complete | Commander.js CLI, `new`, `deploy`, `init`, `status`, `invoke`, `vm`, `daemon`, animated Ora spinners, cli-table3 telemetry, 11 tests passing |
 
 ### Web Developer Console & Verification
 

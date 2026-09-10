@@ -9,5 +9,6 @@ export * from "./commands/status.js";
 export * from "./commands/invoke.js";
 export * from "./commands/deploy.js";
 export * from "./commands/vm.js";
+export * from "./commands/daemon.js";
 export * from "./utils/keypair.js";
 export * from "./views/telemetry-view.js";

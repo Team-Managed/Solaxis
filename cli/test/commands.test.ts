@@ -6,6 +6,7 @@ import { registerStatusCommand } from "../src/commands/status.js";
 import { registerInvokeCommand } from "../src/commands/invoke.js";
 import { registerDeployCommand } from "../src/commands/deploy.js";
 import { registerVmCommand } from "../src/commands/vm.js";
+import { registerDaemonCommand } from "../src/commands/daemon.js";
 
 describe("CLI Command Registration", () => {
   it("registers all required subcommands on Commander instance", () => {
@@ -16,6 +17,7 @@ describe("CLI Command Registration", () => {
     registerInvokeCommand(program);
     registerDeployCommand(program);
     registerVmCommand(program);
+    registerDaemonCommand(program);
 
     const commandNames = program.commands.map((cmd) => cmd.name());
     expect(commandNames).toContain("new");
@@ -24,6 +26,7 @@ describe("CLI Command Registration", () => {
     expect(commandNames).toContain("invoke");
     expect(commandNames).toContain("deploy");
     expect(commandNames).toContain("vm");
+    expect(commandNames).toContain("daemon");
   });
 
   it("registers correct options on invoke command", () => {

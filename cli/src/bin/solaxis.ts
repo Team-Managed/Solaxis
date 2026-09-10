@@ -8,6 +8,7 @@ import { registerStatusCommand } from "../commands/status.js";
 import { registerInvokeCommand } from "../commands/invoke.js";
 import { registerDeployCommand } from "../commands/deploy.js";
 import { registerVmCommand } from "../commands/vm.js";
+import { registerDaemonCommand } from "../commands/daemon.js";
 
 const program = new Command();
 
@@ -34,6 +35,7 @@ registerStatusCommand(program);
 registerInvokeCommand(program);
 registerDeployCommand(program);
 registerVmCommand(program);
+registerDaemonCommand(program);
 
 program.on("command:*", (operands) => {
   console.error(chalk.red(`\n✖ Unknown command: "${operands[0]}"`));
