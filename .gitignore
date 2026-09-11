@@ -17,6 +17,7 @@ target
 *.pem
 *.key
 *.keypair.json
+*-keypair.json
 id.json
 docs/DEMO_FLOW.md
 
