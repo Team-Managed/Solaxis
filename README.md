@@ -135,6 +135,26 @@ pnpm --filter @solaxis/cli solaxis invoke --iterations 50
 pnpm --filter @solaxis/app dev
 ```
 
+### Custom Function Workflow
+
+Generate a standalone Anchor/SBF function project with its own program keypair:
+
+```bash
+pnpm solaxis new order-event-processor
+cd functions/order-event-processor
+anchor build
+cd ..
+pnpm solaxis deploy --program-path functions/order-event-processor/target/deploy/order_event_processor.so --program-keypair functions/order-event-processor/program-keypair.json
+cd functions/order-event-processor
+pnpm install
+pnpm invoke
+```
+
+The generated function implements the Solaxis protocol (`initialize`, `delegate`,
+`execute_batch`, and `undelegate`) and its `solaxis.config.ts` contains the
+deployed program ID. `SolaxisClient` routes invocation to that custom program
+instead of the platform engine when `programId` is present.
+
 ---
 
 ## License

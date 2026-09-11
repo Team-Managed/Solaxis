@@ -1,0 +1,6 @@
+[workspace]
+members = ["programs/order_event_processor"]
+resolver = "2"
+
+[profile.release]
+overflow-checks = true

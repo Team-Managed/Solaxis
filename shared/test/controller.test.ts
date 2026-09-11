@@ -57,7 +57,6 @@ describe("Instruction Builders", () => {
     expect(ix.data.subarray(0, 8)).toEqual(INSTRUCTION_DISCRIMINATORS.initialize);
     expect(ix.data.readBigUInt64LE(8)).toBe(42n);
   });
-
   it("builds delegate instruction with CPI delegation accounts", () => {
     const ix = buildDelegateInstruction({
       programId: dummyProgramId,
@@ -117,7 +116,7 @@ describe("Instruction Builders", () => {
     expect(ix.keys[0]).toEqual({ pubkey: dummyAuthority, isSigner: true, isWritable: true });
     expect(ix.keys[1]).toEqual({ pubkey: dummyTaskPda, isSigner: false, isWritable: true });
     expect(ix.keys[2].pubkey.toBase58()).toBe(MAGIC_PROGRAM_ID);
-    expect(ix.keys[3].pubkey.toBase58()).toBe(MAGIC_CONTEXT_ID);
+    expect(ix.keys[3]).toEqual({ pubkey: new PublicKey(MAGIC_CONTEXT_ID), isSigner: false, isWritable: true });
     expect(ix.data).toEqual(INSTRUCTION_DISCRIMINATORS.undelegate);
   });
 });

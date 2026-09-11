@@ -4,6 +4,7 @@ packages:
   - 'cli'
   - 'app'
   - 'shared'
+  - 'functions/*'
 
 allowBuilds:
   bufferutil: true

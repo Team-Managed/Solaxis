@@ -30,6 +30,7 @@ Design aesthetics, developer quickstart, and observability layout have been elev
     3. **Explorer Proofs**: Verifiable on-chain settlement signatures and Solana Explorer audit links.
 - All TypeScript types pass validation with 0 errors across all monorepo packages, all 70+ unit tests passing.
 - Audit remediation: Anchor-compatible PDA derivation, strict L1 settlement proof handling, corrected lifecycle status codes, deterministic workspace ordering, and non-interactive app linting are implemented.
+- Custom function foundation: `solaxis new` now generates a standalone Anchor/SBF program with its own program ID and lifecycle protocol; SDK invocation routes to that custom program when its manifest includes `programId`.
 
 ---
 

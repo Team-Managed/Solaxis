@@ -176,7 +176,7 @@ export function buildUndelegateInstruction(params: {
       { pubkey: params.payer, isSigner: true, isWritable: true },
       { pubkey: params.taskPda, isSigner: false, isWritable: true },
       { pubkey: new PublicKey(MAGIC_PROGRAM_ID), isSigner: false, isWritable: false },
-      { pubkey: new PublicKey(MAGIC_CONTEXT_ID), isSigner: false, isWritable: false },
+      { pubkey: new PublicKey(MAGIC_CONTEXT_ID), isSigner: false, isWritable: true },
     ],
     data: INSTRUCTION_DISCRIMINATORS.undelegate,
   });

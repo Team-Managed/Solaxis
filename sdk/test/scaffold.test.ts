@@ -25,7 +25,7 @@ describe("scaffoldFunctionProject", () => {
     });
 
     expect(result.projectDir).toBe(targetDir);
-    expect(result.filesCreated.length).toBe(4);
+    expect(result.filesCreated.length).toBe(8);
 
     // Verify package.json
     const packageJsonRaw = await fs.readFile(path.join(targetDir, "package.json"), "utf-8");
@@ -44,9 +44,13 @@ describe("scaffoldFunctionProject", () => {
     expect(indexRaw).toContain('import { SolaxisClient } from "@solaxis/sdk"');
 
     // Verify Rust program skeleton
-    const rustRaw = await fs.readFile(path.join(targetDir, "program", "src", "lib.rs"), "utf-8");
-    expect(rustRaw).toContain("pub struct OrderbookSorterKernel;");
-    expect(rustRaw).toContain("impl SolaxisComputeHandler for OrderbookSorterKernel");
+    const rustRaw = await fs.readFile(path.join(targetDir, "programs", "orderbook_sorter", "src", "lib.rs"), "utf-8");
+    expect(rustRaw).toContain("#[ephemeral]");
+    expect(rustRaw).toContain("pub fn execute_batch");
+    expect(await fs.stat(path.join(targetDir, "Cargo.toml"))).toBeDefined();
+    expect(await fs.stat(path.join(targetDir, "programs", "orderbook_sorter", "Cargo.toml"))).toBeDefined();
+    expect(await fs.stat(path.join(targetDir, "Anchor.toml"))).toBeDefined();
+    expect(await fs.stat(path.join(targetDir, "program-keypair.json"))).toBeDefined();
   });
 
   it("fails if function name contains invalid characters", async () => {

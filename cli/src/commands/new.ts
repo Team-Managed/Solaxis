@@ -13,7 +13,9 @@ export function registerNewCommand(program: Command): void {
     .option("--dir <path>", "Target output directory (defaults to ./<name>)")
     .action(async (name: string, options) => {
       try {
-        const targetDir = options.dir ? path.resolve(options.dir) : path.resolve(process.cwd(), name);
+        const targetDir = options.dir
+          ? path.resolve(options.dir)
+          : path.resolve(process.cwd(), "functions", name);
         const iterations = parseInt(options.iterations, 10);
 
         if (isNaN(iterations) || iterations < 1 || iterations > 200) {
@@ -38,7 +40,7 @@ export function registerNewCommand(program: Command): void {
         }
 
         console.log(chalk.bold.hex("#10B981")("\nNext Steps:"));
-        console.log(chalk.white(`  cd ${name}`));
+        console.log(chalk.white(`  cd functions/${name}`));
         console.log(chalk.white("  pnpm install"));
         console.log(chalk.white("  pnpm invoke\n"));
         process.exit(0);

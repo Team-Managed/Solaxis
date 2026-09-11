@@ -29,6 +29,8 @@ export interface FunctionConfig<TInput = any, TOutput = any> {
   defaultIterations?: number;
   /** Target execution validator (standard-er or confidential-tee) */
   targetValidator?: TargetValidator;
+  /** Deployed custom Anchor program implementing the Solaxis execute protocol. */
+  programId?: string;
   /** Optional custom client-side compute execution hook */
   handler?: (context: FunctionExecutionContext<TInput>) => Promise<TOutput> | TOutput;
 }
@@ -43,6 +45,7 @@ export interface FunctionDefinition<TInput = any, TOutput = any> {
   outputSchema?: z.ZodType<TOutput>;
   defaultIterations: number;
   targetValidator: TargetValidator;
+  programId?: string;
   handler?: (context: FunctionExecutionContext<TInput>) => Promise<TOutput> | TOutput;
 }
 
@@ -80,6 +83,7 @@ export function defineFunction<TInput = any, TOutput = any>(
     outputSchema: config.outputSchema,
     defaultIterations,
     targetValidator: config.targetValidator ?? "confidential-tee",
+    programId: config.programId,
     handler: config.handler,
   };
 }

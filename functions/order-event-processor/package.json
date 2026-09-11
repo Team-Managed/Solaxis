@@ -1,0 +1,18 @@
+{
+  "name": "order-event-processor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "invoke": "tsx index.ts"
+  },
+  "dependencies": {
+    "@solaxis/sdk": "workspace:*",
+    "@solana/web3.js": "^1.98.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.3"
+  }
+}

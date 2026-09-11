@@ -57,6 +57,12 @@ export function LandingNav() {
 
         {/* Right CTA Buttons (Ref: answerr reference navbar) */}
         <div className="hidden sm:flex items-center gap-3">
+          <Link
+            href="/console"
+            className="text-xs font-bold text-indigo-950 hover:text-sky-600 px-3 py-1.5 transition-colors"
+          >
+            Open Console
+          </Link>
           <a
             href="#how-it-works"
             className="text-xs font-bold text-indigo-950 hover:text-sky-600 px-3 py-1.5 transition-colors"
@@ -116,6 +122,11 @@ export function LandingNav() {
             </a>
           </nav>
           <div className="pt-3 border-t border-slate-200/60 flex flex-col gap-2">
+            <Link href="/console" onClick={() => setMobileMenuOpen(false)}>
+              <Button className="w-full h-10 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs">
+                Open Console
+              </Button>
+            </Link>
             <a href="#quickstart" onClick={() => setMobileMenuOpen(false)}>
               <Button className="w-full h-10 rounded-md bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs">
                 Get Started

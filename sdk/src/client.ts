@@ -14,6 +14,7 @@ import {
   type TelemetryMetrics,
   type TaskStatus,
   type ProgressEvent,
+  MAGICBLOCK_DEVNET_ASIA_VALIDATOR_PUBKEY,
 } from "@solaxis/shared";
 
 import type { SolaxisClientEvents } from "./events.js";
@@ -52,6 +53,7 @@ export class SolaxisClient extends EventEmitter<SolaxisClientEvents> {
   private controller: LifecycleController;
   private connection: Connection;
   private routerUrl: string;
+  private wallet: SolaxisWallet | Keypair;
 
   constructor(config: SolaxisClientOptions = {}) {
     super();
@@ -63,6 +65,7 @@ export class SolaxisClient extends EventEmitter<SolaxisClientEvents> {
 
     // Use provided wallet or generate an ephemeral Keypair
     const wallet = config.wallet ?? Keypair.generate();
+    this.wallet = wallet;
 
     this.controller = new LifecycleController({
       baseConnection: this.connection,
@@ -74,16 +77,19 @@ export class SolaxisClient extends EventEmitter<SolaxisClientEvents> {
       routerTimeoutMs: config.routerTimeoutMs,
     });
 
-    // Wire controller callbacks to typed EventEmitter
-    this.controller.onStateChange((status: TaskStatus, previousStatus: TaskStatus) => {
+    this.wireController(this.controller);
+  }
+
+  private wireController(controller: LifecycleController): void {
+    controller.onStateChange((status: TaskStatus, previousStatus: TaskStatus) => {
       this.emit("statusChange", status, previousStatus);
     });
 
-    this.controller.onProgress((event: ProgressEvent) => {
+    controller.onProgress((event: ProgressEvent) => {
       this.emit("progress", event);
     });
 
-    this.controller.onLog(
+    controller.onLog(
       (
         level: "DEBUG" | "INFO" | "WARN" | "ERROR",
         message: string,
@@ -92,6 +98,24 @@ export class SolaxisClient extends EventEmitter<SolaxisClientEvents> {
         this.emit("log", level, message, meta);
       }
     );
+  }
+
+  private controllerForFunction(functionDef: FunctionDefinition): LifecycleController {
+    if (!functionDef.programId || functionDef.programId === this.controller.getProgramId().toBase58()) {
+      return this.controller;
+    }
+
+    const controller = new LifecycleController({
+      baseConnection: this.connection,
+      routerUrl: this.routerUrl,
+      wallet: this.wallet,
+      programId: functionDef.programId,
+      defaultValidator: functionDef.targetValidator === "standard-er"
+        ? MAGICBLOCK_DEVNET_ASIA_VALIDATOR_PUBKEY
+        : undefined,
+    });
+    this.wireController(controller);
+    return controller;
   }
 
   /**
@@ -211,7 +235,7 @@ export class SolaxisClient extends EventEmitter<SolaxisClientEvents> {
     const seed = options.seed ?? 42;
 
     try {
-      const result = await this.controller.invoke({
+      const result = await this.controllerForFunction(functionDef).invoke({
         taskId,
         iterations,
         seed,

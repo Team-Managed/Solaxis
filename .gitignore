@@ -18,6 +18,7 @@ target
 *.key
 *.keypair.json
 id.json
+docs/DEMO_FLOW.md
 
 # Cache and logs
 .turbo
