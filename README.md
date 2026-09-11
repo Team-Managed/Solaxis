@@ -122,6 +122,8 @@ pnpm install
 cp .env.example .env
 ```
 
+Set `DEMO_REDIRECT_URL` in the Render client service to make `/demo` redirect to the hosted demo video or presentation URL.
+
 ### Build and Run
 
 ```bash
