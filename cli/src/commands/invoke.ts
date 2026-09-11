@@ -181,32 +181,6 @@ export function registerInvokeCommand(program: Command): void {
           process.exit(0);
         } catch (execErr: unknown) {
           const errMsg = String((execErr as Error)?.message || "");
-          if (errMsg.includes("Attempt to load a program that does not exist") || errMsg.includes("does not exist")) {
-            spinner.info(
-              chalk.yellow("Devnet Engine Program (CcXRe1...) is not yet deployed on Solana Devnet L1.")
-            );
-            console.log(
-              chalk.cyan(
-                "\n⚡ Running 5-stage micro-instance pipeline in demonstration mode...\n"
-              )
-            );
-            await runSimulatedLifecycle({
-              functionDef,
-              taskId,
-              iterations,
-              seed,
-              validatorTarget,
-              isJson,
-              spinner,
-            });
-            console.log(
-              chalk.gray(
-                "💡 Note: To deploy your custom program directly to Devnet, run:\n" +
-                  `   ${chalk.cyan("solaxis deploy --program-path <path/to/engine.so>")}\n`
-              )
-            );
-            process.exit(0);
-          }
           throw execErr;
         }
       } catch (err) {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { PublicKey } from "@solana/web3.js";
-import { deriveTaskPda, TASK_PDA_SEED_PREFIX, MAX_SEED_LENGTH } from "../src/index.js";
+import { deriveTaskPda, deriveTaskAccountPda, TASK_PDA_SEED_PREFIX, MAX_SEED_LENGTH } from "../src/index.js";
 
 describe("deriveTaskPda", () => {
   const dummyProgramId = new PublicKey("11111111111111111111111111111111");
@@ -43,5 +43,12 @@ describe("deriveTaskPda", () => {
     const resB = deriveTaskPda(dummyProgramId, dummyAuthority, "task-B");
 
     expect(resA.pda.toBase58()).not.toBe(resB.pda.toBase58());
+  });
+
+  it("matches the Anchor-compatible u64 PDA derivation used by the controller", () => {
+    const shared = deriveTaskPda(dummyProgramId, dummyAuthority, "task-test-01");
+    const controller = deriveTaskAccountPda(dummyProgramId, dummyAuthority, "task-test-01");
+    expect(shared.pda.toBase58()).toBe(controller[0].toBase58());
+    expect(shared.bump).toBe(controller[1]);
   });
 });

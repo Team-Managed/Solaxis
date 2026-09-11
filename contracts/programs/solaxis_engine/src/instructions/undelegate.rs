@@ -27,8 +27,8 @@ pub fn undelegate(ctx: Context<Undelegate>) -> Result<()> {
         SolaxisError::InvalidStatusTransition
     );
 
-    // Set status to 3 (Settled) and record completion timestamp
-    task.status = 3; // 3 = Settled
+    // The committed account must be settled when ownership returns to L1.
+    task.status = 4; // 4 = Settled
     task.completed_at = Some(clock.unix_timestamp);
 
     // Construct and invoke atomic commit and undelegation intent

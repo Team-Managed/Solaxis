@@ -14,3 +14,4 @@ allowBuilds:
   protobufjs: true
   tiny-secp256k1: true
   usb: true
+  unrs-resolver: true

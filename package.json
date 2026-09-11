@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@12.3.4",
   "scripts": {
-    "build": "pnpm --filter \"@solaxis/*\" run build",
-    "typecheck": "pnpm --filter \"@solaxis/*\" run typecheck",
+    "build": "pnpm --filter \"@solaxis/*\" --sort run build",
+    "typecheck": "pnpm --filter \"@solaxis/*\" --sort run typecheck",
     "test": "pnpm --filter \"@solaxis/*\" run test",
     "lint": "pnpm --filter \"@solaxis/*\" run lint",
     "cli": "node ./cli/dist/bin/solaxis.js",

@@ -4,9 +4,9 @@
   "private": true,
   "description": "Solaxis Anchor Engine Smart Contract Workspace",
   "scripts": {
-    "build": "anchor build",
+    "build": "anchor build --ignore-keys",
     "typecheck": "echo 'No TypeScript in contracts'",
     "test": "cargo test --manifest-path programs/solaxis_engine/Cargo.toml",
-    "lint": "cargo clippy --manifest-path programs/solaxis_engine/Cargo.toml -- -D warnings"
+    "lint": "cargo clippy --manifest-path programs/solaxis_engine/Cargo.toml -- -A unexpected_cfgs -D warnings"
   }
 }

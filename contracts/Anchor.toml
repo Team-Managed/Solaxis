@@ -1,15 +1,15 @@
 [toolchain]
-anchor_version = "0.30.1"
+anchor_version = "0.32.1"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.localnet]
-solaxis_engine = "CcXRe1NVN8fQ2jKyuNhzqZSsVbc6TuVn9SeShapCpb73"
+ solaxis_engine = "2eq1RjrJXK4HkWux3xrLqpb6SS7yHuBeDxnPPLVsu6Yj"
 
 [programs.devnet]
-solaxis_engine = "CcXRe1NVN8fQ2jKyuNhzqZSsVbc6TuVn9SeShapCpb73"
+ solaxis_engine = "2eq1RjrJXK4HkWux3xrLqpb6SS7yHuBeDxnPPLVsu6Yj"
 
 [registry]
 url = "https://api.apr.dev"

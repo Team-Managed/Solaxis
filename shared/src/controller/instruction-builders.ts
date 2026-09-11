@@ -13,7 +13,9 @@ import {
   MAGIC_PROGRAM_ID,
   MAGIC_CONTEXT_ID,
 } from "../constants/network.js";
-import { TASK_PDA_SEED_PREFIX } from "../utils/pda.js";
+import { TASK_PDA_SEED_PREFIX, taskIdToBigInt } from "../utils/pda.js";
+
+export { taskIdToBigInt } from "../utils/pda.js";
 
 /** Anchor instruction discriminators for solaxis_engine */
 export const INSTRUCTION_DISCRIMINATORS = {
@@ -28,27 +30,6 @@ export const TASK_SEED_BYTES = Buffer.from(TASK_PDA_SEED_PREFIX, "utf-8");
 /**
  * Normalizes an arbitrary taskId (string, number, or bigint) to a 64-bit unsigned integer (bigint).
  */
-export function taskIdToBigInt(taskId: string | number | bigint): bigint {
-  if (typeof taskId === "bigint") {
-    return taskId;
-  }
-  if (typeof taskId === "number") {
-    return BigInt(Math.floor(taskId));
-  }
-  if (/^\d+$/.test(taskId)) {
-    return BigInt(taskId);
-  }
-  // Deterministic 64-bit FNV-1a hash for arbitrary string task IDs
-  let hash = 0xcbf29ce484222325n;
-  const prime = 0x100000001b3n;
-  const buf = Buffer.from(taskId, "utf-8");
-  for (let i = 0; i < buf.length; i++) {
-    hash ^= BigInt(buf[i]);
-    hash = (hash * prime) & 0xffffffffffffffffn;
-  }
-  return hash;
-}
-
 /**
  * Encodes a 64-bit integer into an 8-byte little-endian Buffer.
  */

@@ -8,6 +8,19 @@ export interface DerivedPdaResult {
   bump: number;
 }
 
+export function taskIdToBigInt(taskId: string | number | bigint): bigint {
+  if (typeof taskId === "bigint") return taskId;
+  if (typeof taskId === "number") return BigInt(Math.floor(taskId));
+  if (/^\d+$/.test(taskId)) return BigInt(taskId);
+
+  let hash = 0xcbf29ce484222325n;
+  const prime = 0x100000001b3n;
+  for (const byte of Buffer.from(taskId, "utf-8")) {
+    hash = ((hash ^ BigInt(byte)) * prime) & 0xffffffffffffffffn;
+  }
+  return hash;
+}
+
 /**
  * Derives the Task PDA for a given programId, authority, and taskId.
  * Seeds: [b"solaxis_task", authority.key(), taskId.as_bytes()]
@@ -24,13 +37,9 @@ export function deriveTaskPda(
   }
 
   const taskIdBuffer = Buffer.from(taskId, "utf-8");
-  if (taskIdBuffer.length === 0) {
-    throw new Error("taskId buffer must not be empty");
-  }
+  if (taskIdBuffer.length === 0) throw new Error("taskId buffer must not be empty");
   if (taskIdBuffer.length > MAX_SEED_LENGTH) {
-    throw new Error(
-      `taskId seed byte length (${taskIdBuffer.length}) exceeds Solana maximum seed length limit (${MAX_SEED_LENGTH} bytes)`
-    );
+    throw new Error(`taskId seed byte length (${taskIdBuffer.length}) exceeds Solana maximum seed length limit (${MAX_SEED_LENGTH} bytes)`);
   }
 
   const programPubKey = typeof programId === "string" ? new PublicKey(programId) : programId;
@@ -41,11 +50,14 @@ export function deriveTaskPda(
     throw new Error(`Prefix seed exceeds maximum seed length (${MAX_SEED_LENGTH} bytes)`);
   }
 
+  const encodedTaskId = Buffer.alloc(8);
+  encodedTaskId.writeBigUInt64LE(taskIdToBigInt(taskId));
+
   const [pda, bump] = PublicKey.findProgramAddressSync(
     [
       prefixBuffer,
       authorityPubKey.toBuffer(),
-      taskIdBuffer,
+      encodedTaskId,
     ],
     programPubKey
   );

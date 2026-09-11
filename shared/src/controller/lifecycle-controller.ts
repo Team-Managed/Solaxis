@@ -30,7 +30,6 @@ import {
 } from "../constants/network.js";
 import {
   deriveTaskAccountPda,
-  taskIdToBigInt,
   buildInitializeInstruction,
   buildDelegateInstruction,
   buildExecuteBatchInstruction,
@@ -47,7 +46,7 @@ import type {
   StateChangeCallback,
 } from "./types.js";
 
-export const DEFAULT_PROGRAM_ID = new PublicKey("CcXRe1NVN8fQ2jKyuNhzqZSsVbc6TuVn9SeShapCpb73");
+export const DEFAULT_PROGRAM_ID = new PublicKey("2eq1RjrJXK4HkWux3xrLqpb6SS7yHuBeDxnPPLVsu6Yj");
 export const BASE_TX_FEE_LAMPORTS = 5_000;
 export const ESTIMATED_L1_COMPUTE_COST_PER_ITERATION = 5_000;
 
@@ -462,23 +461,19 @@ export class LifecycleController {
 
     this.log("INFO", `Undelegate transaction submitted to Ephemeral Rollup: ${erUndelegateSignature}`);
 
-    let settlementTxSignature = erUndelegateSignature;
-
-    try {
-      // Extract the base L1 commitment signature using the MagicBlock SDK helper
-      const commitSignature = await GetCommitmentSignature(erUndelegateSignature, erConnection);
-      if (commitSignature) {
-        settlementTxSignature = commitSignature;
-        this.log("INFO", `Resolved L1 commitment signature from ER logs: ${commitSignature}`);
-
-        // Await confirmation of the commitment signature on the Base Layer
-        await this.baseConnection.confirmTransaction(commitSignature, this.commitment);
-        this.log("INFO", `Settlement state sealed on Base Layer with confirmed signature: ${commitSignature}`);
-      }
-    } catch (err) {
-      // In mock/test environments or direct settlement, fallback cleanly to erUndelegateSignature
-      this.log("DEBUG", `GetCommitmentSignature fallback used: ${(err as Error).message}`);
+    // Never treat the ER transaction as an L1 proof. The commitment signature
+    // is the only signature that proves ownership returned to the base layer.
+    const settlementTxSignature = await GetCommitmentSignature(
+      erUndelegateSignature,
+      erConnection
+    );
+    if (!settlementTxSignature) {
+      throw new Error("MagicBlock did not return an L1 commitment signature");
     }
+
+    this.log("INFO", `Resolved L1 commitment signature from ER logs: ${settlementTxSignature}`);
+    await this.baseConnection.confirmTransaction(settlementTxSignature, this.commitment);
+    this.log("INFO", `Settlement state sealed on Base Layer with confirmed signature: ${settlementTxSignature}`);
 
     this.teardownDurationMs = Math.max(1, performance.now() - this.teardownStartTime);
     this.transitionTo("SETTLED");

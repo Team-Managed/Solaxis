@@ -16,7 +16,7 @@ pub(crate) use instructions::__client_accounts_execute_batch;
 pub(crate) use instructions::__client_accounts_initialize_task;
 pub(crate) use instructions::__client_accounts_undelegate;
 
-declare_id!("CcXRe1NVN8fQ2jKyuNhzqZSsVbc6TuVn9SeShapCpb73");
+ declare_id!("2eq1RjrJXK4HkWux3xrLqpb6SS7yHuBeDxnPPLVsu6Yj");
 
 #[ephemeral]
 #[program]

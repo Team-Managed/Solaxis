@@ -17,8 +17,9 @@ const STATUS_MAP: Record<number, TaskStatus> = {
   0: "IDLE",
   1: "PROVISIONING",
   2: "RUNNING",
-  3: "SETTLED",
-  4: "FAILED",
+  3: "TEARING_DOWN",
+  4: "SETTLED",
+  5: "FAILED",
 };
 
 export function registerStatusCommand(program: Command): void {
@@ -169,6 +170,8 @@ function formatStatusBadge(status: TaskStatus): string {
       return chalk.bgGreen.black(" SETTLED ");
     case "RUNNING":
       return chalk.bgCyan.black(" RUNNING ");
+    case "TEARING_DOWN":
+      return chalk.bgBlue.white(" TEARING_DOWN ");
     case "PROVISIONING":
       return chalk.bgYellow.black(" PROVISIONING ");
     case "FAILED":

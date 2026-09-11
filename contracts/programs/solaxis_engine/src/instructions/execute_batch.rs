@@ -35,7 +35,7 @@ pub fn execute_batch(ctx: Context<ExecuteBatch>, iterations: u32, seed: u64) -> 
             .wrapping_add(i as u64)
             .wrapping_mul(6364136223846793005)
             .wrapping_add(1442695040888963407);
-        current_output = current_output ^ step;
+        current_output ^= step;
         current_output = current_output
             .rotate_left(5)
             .wrapping_mul(0x517cc1b727220a95);

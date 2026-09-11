@@ -34,6 +34,7 @@ import { HexClusterMap } from "@/components/console/hex-cluster-map";
 import { ThroughputDotChart } from "@/components/console/throughput-dot-chart";
 import { CloudwatchTerminal } from "@/components/terminal/cloudwatch-terminal";
 import { BenchmarkCard } from "@/components/benchmark/benchmark-card";
+import { LifecycleVisualizer } from "@/components/visualizer/lifecycle-visualizer";
 import { StatusBadge } from "@/components/solaxis/status-badge";
 import { LatencyCounter } from "@/components/solaxis/latency-counter";
 import { ConsoleErrorState } from "@/components/solaxis/console-state";
@@ -149,6 +150,8 @@ export function ConsoleLayout() {
                 </button>
               </div>
             )}
+
+            <LifecycleVisualizer />
 
             {/* Top Row: 2 Web3 KPI Action Cards (Zero Fake Numbers) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
